@@ -30,12 +30,13 @@ namespace qmeta_image {
 
 Tiff::Tiff(QWidget *parent) : QObject(parent) {}
 
-// Initializes a TIFF file with the specified file_path. Returns true if the
-// specified file_path is a valid TIFF file and initialization is completed.
-bool Tiff::Init(const QString &file_path) {
-  QFile file(file_path);
+// Opens a TIFF file with the specified file_path. Returns true if the specified
+// file_path is a valid TIFF file and initialization is completed.
+bool Tiff::Open(const QString &file_path) {
+  QFile file(file_path, this);
   file.open(QIODevice::ReadOnly);
-  // Determines the endianness.
+  // Reads the first two bytes from the image file header to determine the
+  // endianness of the Tiff file.
   QString endianness = file.read(2);
   if (endianness == "II")
     set_endianness(kLittleEndians);

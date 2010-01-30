@@ -39,7 +39,7 @@ class Tiff : public QObject {
   };
 
   explicit Tiff(QWidget *parent = NULL);
-  bool Init(const QString &file_path);
+  bool Open(const QString &file_path);
   Endianness endianness() const { return endianness_; }
 
  private:
