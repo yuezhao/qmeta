@@ -28,11 +28,11 @@
 
 namespace qmeta_image {
 
-TIFF::TIFF(QWidget *parent) : QObject(parent) {}
+Tiff::Tiff(QWidget *parent) : QObject(parent) {}
 
 // Initializes a TIFF file with the specified file_path. Returns true if the
 // specified file_path is a valid TIFF file and initialization is completed.
-bool TIFF::Init(const QString &file_path) {
+bool Tiff::Init(const QString &file_path) {
   QFile file(file_path);
   file.open(QIODevice::ReadOnly);
   // Determines the endianness.

@@ -31,14 +31,14 @@ class QString;
 
 namespace qmeta_image {
 
-class TIFF : public QObject {
+class Tiff : public QObject {
  public:
   enum Endianness {
     kLittleEndians = 0,
     kBigEndians
   };
 
-  explicit TIFF(QWidget *parent = NULL);
+  explicit Tiff(QWidget *parent = NULL);
   bool Init(const QString &file_path);
   Endianness endianness() const { return endianness_; }
 
