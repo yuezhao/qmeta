@@ -20,7 +20,7 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file implements the detail of the Jpeg class.
+// This file defines the Jpeg class.
 
 #ifndef QMETA_IMAGE_JPEG_H_
 #define QMETA_IMAGE_JPEG_H_
