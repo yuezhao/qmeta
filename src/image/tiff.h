@@ -33,16 +33,16 @@ namespace qmeta_image {
 
 class Tiff : public QObject {
  public:
+  explicit Tiff(QWidget *parent = NULL);
+  bool Open(const QString &file_path);
+
+ private:
   enum Endianness {
     kLittleEndians = 0,
     kBigEndians
   };
 
-  explicit Tiff(QWidget *parent = NULL);
-  bool Open(const QString &file_path);
   Endianness endianness() const { return endianness_; }
-
- private:
   void set_endianness(Endianness endianness) { endianness_ = endianness; }
 
   // The byte order of the TIFF file.

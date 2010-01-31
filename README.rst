@@ -11,9 +11,11 @@ various raw image files seamlessly with Qt applications.
 
 Requirements
 ------------
-Because QMeta is a library for Qt, you need the Qt library installed in order
-to use it. Further, QMeta uses qmake (part of Qt) to build itself, so you may
-need to know how it works.
+QMeta relies on the Qitty library, which is a toolkit to enhance the Qt library. You can find this project at http://github.com/ollix/qitty.
+
+Because QMeta is a library for Qt, you also need the Qt library installed in
+order to use it. Further, QMeta uses qmake (part of Qt) to build itself, so you
+may need to know how it works.
 
 Getting the Source
 ------------------

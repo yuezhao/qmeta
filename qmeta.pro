@@ -45,4 +45,8 @@ unix {
     headers.path = /usr/include/$${TARGET}
     target.path = /usr/lib
     INSTALLS += headers target
+
+    # Qitty
+    INCLUDEPATH *= /usr/include
+    LIBS += -lqitty
 }

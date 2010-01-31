@@ -25,6 +25,7 @@
 #include "image/tiff.h"
 
 #include <QtGui>
+#include <qitty/byte_array.h>
 
 namespace qmeta_image {
 
@@ -37,12 +38,24 @@ bool Tiff::Open(const QString &file_path) {
   file.open(QIODevice::ReadOnly);
   // Reads the first two bytes from the image file header to determine the
   // endianness of the Tiff file.
-  QString endianness = file.read(2);
-  if (endianness == "II")
+  QByteArray endianness_bytes = file.read(2);
+  if (endianness_bytes == "II")
     set_endianness(kLittleEndians);
-  else if (endianness == "MM")
+  else if (endianness_bytes == "MM")
     set_endianness(kBigEndians);
   else
+    return false;
+
+  // Further identifies the file whether is a TIFF file by reading the next two
+  // bytes in the image file header. The value of these two bytes should equal
+  // to 42 in decimal, which means the two bytes is represented as "002a" in
+  // hexidecimal in big-endian byte order.
+  QByteArray fourty_two_bytes = file.read(2);
+  // Coverts the bytes to big-endian byte order if the TIFF file uses the
+  // little-endian byte order.
+  if (endianness() == kLittleEndians)
+    fourty_two_bytes = qitty_utils::ReverseByteArray(fourty_two_bytes);
+  if (fourty_two_bytes.toHex() != "002a")
     return false;
   return true;
 }
