@@ -36,6 +36,7 @@ Tiff::Tiff(QWidget *parent) : QObject(parent) {}
 bool Tiff::Open(const QString &file_path) {
   QFile file(file_path, this);
   file.open(QIODevice::ReadOnly);
+
   // Reads the first two bytes from the image file header to determine the
   // endianness of the Tiff file.
   QByteArray endianness_bytes = file.read(2);
@@ -55,6 +56,23 @@ bool Tiff::Open(const QString &file_path) {
     fourty_two_bytes = qitty_utils::ReverseByteArray(fourty_two_bytes);
   if (!qitty_utils::EqualToInt(fourty_two_bytes, 42))
     return false;
+
+  // Reads the offset of the first IFD by reading the next 4 bytes in the
+  // image file header.
+  QByteArray first_ifd_offset_bytes = file.read(4);
+  // Coverts the bytes to big-endian byte order if the TIFF file uses the
+  // little-endian byte order.
+    if (endianness() == kLittleEndians) {
+    first_ifd_offset_bytes =
+        qitty_utils::ReverseByteArray(first_ifd_offset_bytes);
+  }
+  bool ok = false;
+  int first_ifd_offset = first_ifd_offset_bytes.toHex().toInt(&ok, 16);
+  if (ok)
+    set_first_ifd_offset(first_ifd_offset);
+  else
+    return false;
+
   return true;
 }
 

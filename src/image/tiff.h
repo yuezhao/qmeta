@@ -44,9 +44,13 @@ class Tiff : public QObject {
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endianness) { endianness_ = endianness; }
+  int first_ifd_offset() const { return first_ifd_offset_; }
+  void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
 
   // The byte order of the TIFF file.
   Endianness endianness_;
+  // The offset (in bytes) of the first IFD.
+  int first_ifd_offset_;
 };
 
 }  // namespace qmeta_image
