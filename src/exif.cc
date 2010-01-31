@@ -20,23 +20,14 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the Jpeg class.
+// This file implements the detail of the Exif class.
 
-#ifndef QMETA_FILE_TYPES_JPEG_
-#define QMETA_FILE_TYPES_JPEG_
+#include "exif.h"
 
-#include <QObject>
-
-class QString;
+#include <QtCore>
 
 namespace qmeta {
 
-class Jpeg : public QObject {
- public:
-  explicit Jpeg(QWidget *parent = NULL);
-  bool Open(const QString &file_path);
-};
+Exif::Exif(QObject *parent) : QObject(parent) {}
 
 }  // namespace qmeta
-
-#endif  // QMETA_FILE_TYPES_JPEG_

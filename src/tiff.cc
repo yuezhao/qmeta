@@ -22,14 +22,14 @@
 //
 // This file implements the detail of the TIFF class.
 
-#include "file_types/tiff.h"
+#include "tiff.h"
 
-#include <QtGui>
+#include <QtCore>
 #include <qitty/byte_array.h>
 
 namespace qmeta {
 
-Tiff::Tiff(QWidget *parent) : QObject(parent) {}
+Tiff::Tiff(QObject *parent) : FileType(parent) {}
 
 // Opens a TIFF file with the specified file_path. Returns true if the specified
 // file_path is a valid TIFF file and initialization is completed.

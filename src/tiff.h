@@ -22,18 +22,18 @@
 //
 // This file defines the TIFF class.
 
-#ifndef QMETA_FILE_TYPES_TIFF_H_
-#define QMETA_FILE_TYPES_TIFF_H_
+#ifndef QMETA_TIFF_H_
+#define QMETA_TIFF_H_
 
-#include <QObject>
+#include "file_type.h"
 
 class QString;
 
 namespace qmeta {
 
-class Tiff : public QObject {
+class Tiff : public FileType {
  public:
-  explicit Tiff(QWidget *parent = NULL);
+  explicit Tiff(QObject *parent = NULL);
   bool Open(const QString &file_path);
 
  private:
@@ -69,4 +69,4 @@ class Tiff : public QObject {
 
 }  // namespace qmeta
 
-#endif  // QMETA_FILE_TYPES_TIFF_H_
+#endif  // QMETA_TIFF_H_

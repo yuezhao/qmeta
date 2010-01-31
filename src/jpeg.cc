@@ -22,14 +22,14 @@
 //
 // This file implements the detail of the Jpeg class.
 
-#include "file_types/jpeg.h"
+#include "jpeg.h"
 
-#include <QtGui>
+#include <QtCore>
 #include <qitty/byte_array.h>
 
 namespace qmeta {
 
-Jpeg::Jpeg(QWidget *parent) : QObject(parent) {}
+Jpeg::Jpeg(QObject *parent) : FileType(parent) {}
 
 // Opens a JPEG file with the specified file_path. Returns true if the specified
 // file_path is a valid JPEG file and initialization is completed.

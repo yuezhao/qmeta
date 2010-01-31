@@ -27,6 +27,7 @@ TEMPLATE = lib
 TARGET = qmeta
 VERSION = 0.1
 CONFIG += release qt
+QT = core
 DESTDIR = dist
 
 # Sets directories for build files.
@@ -37,12 +38,14 @@ UI_DIR = build/ui
 
 # Source code files for the QMeta.
 INCLUDEPATH = src
-HEADERS += src/file_types/tiff.h \
-           src/file_types/jpeg.h \
-           src/metadata_types/exif.h
-SOURCES += src/file_types/tiff.cc \
-           src/file_types/jpeg.cc \
-           src/metadata_types/exif.cc
+HEADERS += src/exif.h \
+           src/file_type.h \
+           src/tiff.h \
+           src/jpeg.h
+SOURCES += src/exif.cc \
+           src/file_type.cc \
+           src/tiff.cc \
+           src/jpeg.cc
 
 unix {
     headers.files = $$HEADERS
