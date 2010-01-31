@@ -25,6 +25,7 @@
 #include "image/jpeg.h"
 
 #include <QtGui>
+#include <qitty/byte_array.h>
 
 namespace qmeta_image {
 
@@ -42,6 +43,15 @@ bool Jpeg::Open(const QString &file_path) {
 
   // Checks the next 2 bytes if equals to the APP1 marker.
   if (file.read(2).toHex() != "ffe1")
+    return false;
+
+  // Retrieves the APP1 length.
+  int app1_length = qitty_utils::ToInt(file.read(2));
+  if (app1_length == -1)
+    return false;
+
+  // Checks the Exif Identifier Code.
+  if (file.read(6).toHex() != "457869660000")
     return false;
 
   return true;
