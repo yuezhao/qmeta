@@ -18,16 +18,16 @@
 // ---
 // Author: olliwang@ollix.com (Olli Wang)
 //
-// QMeta - a library to manipulate image metadata based on Qt.
+// QMeta - a library to manipulate file_types metadata based on Qt.
 //
 // This file implements the detail of the Jpeg class.
 
-#include "image/jpeg.h"
+#include "file_types/jpeg.h"
 
 #include <QtGui>
 #include <qitty/byte_array.h>
 
-namespace qmeta_image {
+namespace qmeta {
 
 Jpeg::Jpeg(QWidget *parent) : QObject(parent) {}
 
@@ -57,4 +57,4 @@ bool Jpeg::Open(const QString &file_path) {
   return true;
 }
 
-}  // namespace qmeta_image
+}  // namespace qmeta

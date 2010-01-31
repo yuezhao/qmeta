@@ -20,14 +20,20 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file implements the detail of the Exif class.
+// This file defines the Exif class.
 
-#include "metadata/exif.h"
+#ifndef QMETA_METADATA_TYPES_EXIF_H_
+#define QMETA_METADATA_TYPES_EXIF_H_
 
-#include <QtGui>
+#include <QObject>
 
-namespace qmeta_metadata {
+namespace qmeta {
 
-Exif::Exif(QWidget *parent) : QObject(parent) {}
+class Exif : public QObject {
+ public:
+  explicit Exif(QWidget *parent = NULL);
+};
 
-}  // namespace qmeta_metadata
+}  // namespace qmeta
+
+#endif  // QMETA_METADATA_TYPES_EXIF_H_

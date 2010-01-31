@@ -20,39 +20,23 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the TIFF class.
+// This file defines the Jpeg class.
 
-#ifndef QMETA_IMAGE_TIFF_H_
-#define QMETA_IMAGE_TIFF_H_
+#ifndef QMETA_FILE_TYPES_JPEG_
+#define QMETA_FILE_TYPES_JPEG_
 
 #include <QObject>
 
 class QString;
 
-namespace qmeta_image {
+namespace qmeta {
 
-class Tiff : public QObject {
+class Jpeg : public QObject {
  public:
-  explicit Tiff(QWidget *parent = NULL);
+  explicit Jpeg(QWidget *parent = NULL);
   bool Open(const QString &file_path);
-
- private:
-  enum Endianness {
-    kLittleEndians = 0,
-    kBigEndians
-  };
-
-  Endianness endianness() const { return endianness_; }
-  void set_endianness(Endianness endianness) { endianness_ = endianness; }
-  int first_ifd_offset() const { return first_ifd_offset_; }
-  void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
-
-  // The byte order of the TIFF file.
-  Endianness endianness_;
-  // The offset (in bytes) of the first IFD.
-  int first_ifd_offset_;
 };
 
-}  // namespace qmeta_image
+}  // namespace qmeta
 
-#endif  // QMETA_IMAGE_TIFF_H_
+#endif  // QMETA_FILE_TYPES_JPEG_

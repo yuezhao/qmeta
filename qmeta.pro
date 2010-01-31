@@ -18,7 +18,7 @@
 # ---
 # Author: olliwang@ollix.com (Olli Wang)
 #
-# QMeta - a library to manipulate image metadata based on Qt.
+# QMeta - a library to manipulate file_types metadata based on Qt.
 #
 # This is the project file that required by qmake to build the QMeta library.
 # You may need to modify this file to adapt your environment.
@@ -37,12 +37,12 @@ UI_DIR = build/ui
 
 # Source code files for the QMeta.
 INCLUDEPATH = src
-HEADERS += src/image/tiff.h \
-           src/image/jpeg.h \
-           src/metadata/exif.h
-SOURCES += src/image/tiff.cc \
-           src/image/jpeg.cc \
-           src/metadata/exif.cc
+HEADERS += src/file_types/tiff.h \
+           src/file_types/jpeg.h \
+           src/metadata_types/exif.h
+SOURCES += src/file_types/tiff.cc \
+           src/file_types/jpeg.cc \
+           src/metadata_types/exif.cc
 
 unix {
     headers.files = $$HEADERS

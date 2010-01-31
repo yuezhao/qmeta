@@ -22,12 +22,12 @@
 //
 // This file implements the detail of the TIFF class.
 
-#include "image/tiff.h"
+#include "file_types/tiff.h"
 
 #include <QtGui>
 #include <qitty/byte_array.h>
 
-namespace qmeta_image {
+namespace qmeta {
 
 Tiff::Tiff(QWidget *parent) : QObject(parent) {}
 
@@ -75,4 +75,4 @@ bool Tiff::Open(const QString &file_path) {
   return true;
 }
 
-}  // namespace qmeta_image
+}  // namespace qmeta
