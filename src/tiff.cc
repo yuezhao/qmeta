@@ -25,7 +25,6 @@
 #include "tiff.h"
 
 #include <QtCore>
-#include <qitty/byte_array.h>
 
 #include "qmeta/exif.h"
 
@@ -33,53 +32,16 @@ namespace qmeta {
 
 Tiff::Tiff(QObject *parent) : FileType(parent) {}
 
-bool Tiff::CreateExifObject() {
-  // Creates the Exif object.
-  Exif *exif = new Exif(this);
-  set_exif(exif);
-  return true;
-}
-
 // Opens a TIFF file with the specified file_path. Returns true if the specified
 // file_path is a valid TIFF file and initialization is completed.
 bool Tiff::Open(const QString &file_path) {
   if (!FileType::Open(file_path))
     return false;
 
-  // Reads the first two bytes from the image file header to determine the
-  // endianness of the Tiff file.
-  QByteArray endianness_bytes = file()->read(2);
-  if (endianness_bytes == "II")
-    set_endianness(kLittleEndians);
-  else if (endianness_bytes == "MM")
-    set_endianness(kBigEndians);
-  else
-    return false;
-
-  // Further identifies the file whether is a TIFF file by reading the next two
-  // bytes in the image file header. The value should equal to 42 in decimal.
-  QByteArray fourty_two_bytes = file()->read(2);
-  // Coverts the bytes to big-endian byte order if the TIFF file uses the
-  // little-endian byte order.
-  if (endianness() == kLittleEndians)
-    fourty_two_bytes = qitty_utils::ReverseByteArray(fourty_two_bytes);
-  if (!qitty_utils::EqualToInt(fourty_two_bytes, 42))
-    return false;
-
-  // Reads the offset of the first IFD by reading the next 4 bytes in the
-  // image file header.
-  QByteArray first_ifd_offset_bytes = file()->read(4);
-  // Coverts the bytes to big-endian byte order if the TIFF file uses the
-  // little-endian byte order.
-    if (endianness() == kLittleEndians) {
-    first_ifd_offset_bytes =
-        qitty_utils::ReverseByteArray(first_ifd_offset_bytes);
-  }
-  int first_ifd_offset = qitty_utils::ToInt(first_ifd_offset_bytes);
-  if (first_ifd_offset > 7)
-    set_first_ifd_offset(first_ifd_offset);
-  else
-    return false;
+  // Creates the Exif object.
+  Exif *exif = new Exif(this);
+  if (exif->Init(file(), 0))
+    set_exif(exif);
 
   return true;
 }

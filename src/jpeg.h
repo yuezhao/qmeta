@@ -35,9 +35,6 @@ class Jpeg : public FileType {
  public:
   explicit Jpeg(QObject *parent = NULL);
   bool Open(const QString &file_path);
-
- protected:
-  virtual bool CreateExifObject();
 };
 
 }  // namespace qmeta

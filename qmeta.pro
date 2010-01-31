@@ -40,6 +40,7 @@ UI_DIR = build/ui
 INCLUDEPATH = src
 HEADERS += src/exif.h \
            src/file_type.h \
+           src/identifiers.h \
            src/tiff.h \
            src/jpeg.h
 SOURCES += src/exif.cc \

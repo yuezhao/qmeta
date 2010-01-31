@@ -20,38 +20,18 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the TIFF class.
+// This file defines miscellaneous identifiers used throguh the QMeta library.
 
-#ifndef QMETA_TIFF_H_
-#define QMETA_TIFF_H_
-
-#include "file_type.h"
-
-class QString;
+#ifndef QMETA_IDENTIFIERS_H_
+#define QMETA_IDENTIFIERS_H_
 
 namespace qmeta {
 
-class Tiff : public FileType {
- public:
-  enum FieldTypes {
-    kByteFiledType = 1,
-    kAsciiFiedType = 2,
-    kShortFiledType = 3,
-    kLongFieldType = 4,
-    kRationalFieldType = 5,
-    kSbyteFieldType = 6,
-    kUndefinedFieldType = 7,
-    kSshortFieldType = 8,
-    kSlongFieldType = 9,
-    kSrationalFieldType = 10,
-    kFloatFieldType = 11,
-    kDoubleFieldType = 12,
-  };
-
-  explicit Tiff(QObject *parent = NULL);
-  bool Open(const QString &file_path);
+enum Endianness {
+  kLittleEndians = 0,
+  kBigEndians
 };
 
 }  // namespace qmeta
 
-#endif  // QMETA_TIFF_H_
+#endif  // QMETA_IDENTIFIERS_H_

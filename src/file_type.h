@@ -41,11 +41,6 @@ class FileType : public QObject {
   Exif* exif() const { return exif_; }
 
  protected:
-  // Creates the Exif object for the tracked file. This function should be
-  // implemented in subclasses which support the EXIF specification.
-  // Returns true if the Exif object created successfully.
-  virtual bool CreateExifObject() { return false; }
-
   void set_exif(Exif *exif) { exif_ = exif; }
   QFile* file() const { return file_; }
 

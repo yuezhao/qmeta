@@ -38,12 +38,12 @@ FileType::FileType(QObject *parent) : QObject(parent) {
 // and stores it as a data member. Returns true if successful.
 bool FileType::Open(const QString &file_path) {
   QFile *file = new QFile(file_path, this);
-  if (!file->open(QIODevice::ReadOnly))
+  if (!file->open(QIODevice::ReadOnly)) {
     return false;
-
-  set_file(file);
-  CreateExifObject();
-  return true;
+  } else {
+    set_file(file);
+    return true;
+  }
 }
 
 }  // namespace qmeta
