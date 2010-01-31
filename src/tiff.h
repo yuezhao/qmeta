@@ -36,6 +36,9 @@ class Tiff : public FileType {
   explicit Tiff(QObject *parent = NULL);
   bool Open(const QString &file_path);
 
+ protected:
+  virtual bool CreateExifObject();
+
  private:
   enum Endianness {
     kLittleEndians = 0,

@@ -32,19 +32,31 @@ class QFile;
 
 namespace qmeta {
 
+class Exif;
+
 class FileType : public QObject {
  public:
   explicit FileType(QObject *parent = NULL);
   bool Open(const QString &file_path);
+  Exif* exif() const { return exif_; }
 
  protected:
+  // Creates the Exif object for the tracked file. This function should be
+  // implemented in subclasses which support the EXIF specification.
+  // Returns true if the Exif object created successfully.
+  virtual bool CreateExifObject() { return false; }
+
+  void set_exif(Exif *exif) { exif_ = exif; }
   QFile* file() const { return file_; }
 
  private:
-   void set_file(QFile *file) { file_ = file; }
+  void set_file(QFile *file) { file_ = file; }
 
-   // Keeps the current opened file.
-   QFile *file_;
+  // The corresponded Exif object of the tracked file. This property is set
+  // if the tracked file supports the EXIF specification.
+  Exif *exif_;
+  // Tracks the current opened file.
+  QFile *file_;
 };
 
 }  // namespace qmeta

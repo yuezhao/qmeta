@@ -27,9 +27,32 @@
 #include <QtCore>
 #include <qitty/byte_array.h>
 
+#include "exif.h"
+
 namespace qmeta {
 
 Jpeg::Jpeg(QObject *parent) : FileType(parent) {}
+
+// Reimplements the FileType::CreateExifObject() function.
+bool Jpeg::CreateExifObject() {
+  // Jumps to the beginning of the APP1 marker.
+  file()->seek(2);
+  // Checks the APP1 marker.
+  if (file()->read(2).toHex() != "ffe1")
+    return false;
+  // Retrieves the APP1 length. The length doesn't include the APP1 marker.
+  int app1_length = qitty_utils::ToInt(file()->read(2));
+  if (app1_length == -1)
+    return false;
+  // Checks the Exif Identifier Code.
+  if (file()->read(6).toHex() != "457869660000")
+    return false;
+
+  // Creates the Exif object.
+  Exif *exif = new Exif(this);
+  set_exif(exif);
+  return true;
+}
 
 // Opens a JPEG file with the specified file_path. Returns true if the specified
 // file_path is a valid JPEG file and initialization is completed.
@@ -38,20 +61,8 @@ bool Jpeg::Open(const QString &file_path) {
     return false;
 
   // Checks the first 2 bytes if equals to the SOI marker.
+  file()->seek(0);
   if (file()->read(2).toHex() != "ffd8")
-    return false;
-
-  // Checks the next 2 bytes if equals to the APP1 marker.
-  if (file()->read(2).toHex() != "ffe1")
-    return false;
-
-  // Retrieves the APP1 length.
-  int app1_length = qitty_utils::ToInt(file()->read(2));
-  if (app1_length == -1)
-    return false;
-
-  // Checks the Exif Identifier Code.
-  if (file()->read(6).toHex() != "457869660000")
     return false;
 
   return true;
