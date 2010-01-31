@@ -66,9 +66,8 @@ bool Tiff::Open(const QString &file_path) {
     first_ifd_offset_bytes =
         qitty_utils::ReverseByteArray(first_ifd_offset_bytes);
   }
-  bool ok = false;
-  int first_ifd_offset = first_ifd_offset_bytes.toHex().toInt(&ok, 16);
-  if (ok)
+  int first_ifd_offset = qitty_utils::ToInt(first_ifd_offset_bytes);
+  if (first_ifd_offset > 7)
     set_first_ifd_offset(first_ifd_offset);
   else
     return false;
