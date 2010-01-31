@@ -33,6 +33,17 @@ Jpeg::Jpeg(QWidget *parent) : QObject(parent) {}
 // Opens a JPEG file with the specified file_path. Returns true if the specified
 // file_path is a valid JPEG file and initialization is completed.
 bool Jpeg::Open(const QString &file_path) {
+  QFile file(file_path, this);
+  file.open(QIODevice::ReadOnly);
+
+  // Checks the first 4 bytes if equals to the SOI marker.
+  if (file.read(2).toHex() != "ffd8")
+    return false;
+
+  // Checks the next 2 bytes if equals to the APP1 marker.
+  if (file.read(2).toHex() != "ffe1")
+    return false;
+
   return true;
 }
 
