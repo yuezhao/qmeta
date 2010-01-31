@@ -28,11 +28,23 @@
 
 #include <QObject>
 
+class QFile;
+
 namespace qmeta {
 
 class FileType : public QObject {
  public:
   explicit FileType(QObject *parent = NULL);
+  bool Open(const QString &file_path);
+
+ protected:
+  QFile* file() const { return file_; }
+
+ private:
+   void set_file(QFile *file) { file_ = file; }
+
+   // Keeps the current opened file.
+   QFile *file_;
 };
 
 }  // namespace qmeta

@@ -30,4 +30,11 @@ namespace qmeta {
 
 FileType::FileType(QObject *parent) : QObject(parent) {}
 
+// Constructs a new file object to represent the file with the given file_path
+// and stores it as a data member. Returns true if successful.
+bool FileType::Open(const QString &file_path) {
+  set_file(new QFile(file_path, this));
+  return file()->open(QIODevice::ReadOnly);
+}
+
 }  // namespace qmeta

@@ -34,12 +34,12 @@ Tiff::Tiff(QObject *parent) : FileType(parent) {}
 // Opens a TIFF file with the specified file_path. Returns true if the specified
 // file_path is a valid TIFF file and initialization is completed.
 bool Tiff::Open(const QString &file_path) {
-  QFile file(file_path, this);
-  file.open(QIODevice::ReadOnly);
+  if (!FileType::Open(file_path))
+    return false;
 
   // Reads the first two bytes from the image file header to determine the
   // endianness of the Tiff file.
-  QByteArray endianness_bytes = file.read(2);
+  QByteArray endianness_bytes = file()->read(2);
   if (endianness_bytes == "II")
     set_endianness(kLittleEndians);
   else if (endianness_bytes == "MM")
@@ -49,7 +49,7 @@ bool Tiff::Open(const QString &file_path) {
 
   // Further identifies the file whether is a TIFF file by reading the next two
   // bytes in the image file header. The value should equal to 42 in decimal.
-  QByteArray fourty_two_bytes = file.read(2);
+  QByteArray fourty_two_bytes = file()->read(2);
   // Coverts the bytes to big-endian byte order if the TIFF file uses the
   // little-endian byte order.
   if (endianness() == kLittleEndians)
@@ -59,7 +59,7 @@ bool Tiff::Open(const QString &file_path) {
 
   // Reads the offset of the first IFD by reading the next 4 bytes in the
   // image file header.
-  QByteArray first_ifd_offset_bytes = file.read(4);
+  QByteArray first_ifd_offset_bytes = file()->read(4);
   // Coverts the bytes to big-endian byte order if the TIFF file uses the
   // little-endian byte order.
     if (endianness() == kLittleEndians) {

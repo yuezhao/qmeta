@@ -34,24 +34,24 @@ Jpeg::Jpeg(QObject *parent) : FileType(parent) {}
 // Opens a JPEG file with the specified file_path. Returns true if the specified
 // file_path is a valid JPEG file and initialization is completed.
 bool Jpeg::Open(const QString &file_path) {
-  QFile file(file_path, this);
-  file.open(QIODevice::ReadOnly);
+  if (!FileType::Open(file_path))
+    return false;
 
-  // Checks the first 4 bytes if equals to the SOI marker.
-  if (file.read(2).toHex() != "ffd8")
+  // Checks the first 2 bytes if equals to the SOI marker.
+  if (file()->read(2).toHex() != "ffd8")
     return false;
 
   // Checks the next 2 bytes if equals to the APP1 marker.
-  if (file.read(2).toHex() != "ffe1")
+  if (file()->read(2).toHex() != "ffe1")
     return false;
 
   // Retrieves the APP1 length.
-  int app1_length = qitty_utils::ToInt(file.read(2));
+  int app1_length = qitty_utils::ToInt(file()->read(2));
   if (app1_length == -1)
     return false;
 
   // Checks the Exif Identifier Code.
-  if (file.read(6).toHex() != "457869660000")
+  if (file()->read(6).toHex() != "457869660000")
     return false;
 
   return true;
