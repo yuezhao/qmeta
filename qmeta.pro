@@ -38,9 +38,11 @@ UI_DIR = build/ui
 # Source code files for the QMeta.
 INCLUDEPATH = src
 HEADERS += src/image/tiff.h \
-           src/image/jpeg.h
+           src/image/jpeg.h \
+           src/metadata/exif.h
 SOURCES += src/image/tiff.cc \
-           src/image/jpeg.cc
+           src/image/jpeg.cc \
+           src/metadata/exif.cc
 
 unix {
     headers.files = $$HEADERS
