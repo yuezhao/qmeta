@@ -56,7 +56,7 @@ bool Jpeg::Open(const QString &file_path) {
       if (file()->read(6).toHex() == "457869660000") {
         // Creates the Exif object.
         Exif *exif = new Exif(this);
-        if (exif->Init(file(), file()->pos()))
+        if (exif->Init(file(), file()->pos(), kJpegFileType))
           set_exif(exif);
       }
     }

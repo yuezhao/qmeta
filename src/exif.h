@@ -36,7 +36,9 @@ namespace qmeta {
 class Exif : public QObject {
  public:
   explicit Exif(QObject *parent = NULL);
-  bool Init(QFile *file, const int tiff_header_offset);
+  bool Init(QFile *file, const int tiff_header_offset, FileTypes type);
+  bool ReadIfds();
+  bool ReadIfds(int ifd_offset);
 
  private:
   QByteArray ReadFromFile(const int max_size);
@@ -47,6 +49,8 @@ class Exif : public QObject {
   void set_file(QFile *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
+  FileTypes file_type() const { return file_type_; }
+  void set_file_type(FileTypes type) { file_type_ = type; }
   int tiff_header_offset() const { return tiff_header_offset_; }
   void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
 
@@ -56,6 +60,8 @@ class Exif : public QObject {
   QFile *file_;
   // The offset of the first IFD.
   int first_ifd_offset_;
+  // The type of the tracked file.
+  FileTypes file_type_;
   // The offset of the TIFF header.
   int tiff_header_offset_;
 };

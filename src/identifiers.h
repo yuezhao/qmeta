@@ -32,6 +32,11 @@ enum Endianness {
   kBigEndians
 };
 
+enum FileTypes {
+  kJpegFileType = 0,
+  kTiffFileType,
+};
+
 }  // namespace qmeta
 
 #endif  // QMETA_IDENTIFIERS_H_

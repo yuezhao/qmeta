@@ -35,9 +35,10 @@ Exif::Exif(QObject *parent) : QObject(parent) {}
 // Initializes the Exif object by storing the specified file and
 // tiff_header_offset. It also determines the byte order and the offset of
 // the first IFD. Returns true if the TIFF header is valid.
-bool Exif::Init(QFile *file, const int tiff_header_offset) {
+bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
   set_tiff_header_offset(tiff_header_offset);
   set_file(file);
+  set_file_type(type);
 
   file->seek(tiff_header_offset);
   // Determines the byte order in the specified file.
@@ -62,11 +63,59 @@ bool Exif::Init(QFile *file, const int tiff_header_offset) {
   // by the first IFD, it is written as 00000008 in hexidecimal.
   if (first_ifd_offset == 8)
     first_ifd_offset = file->pos();
-  else if (first_ifd_offset != -1)
+  else if (first_ifd_offset == -1)
     return false;
   set_first_ifd_offset(first_ifd_offset);
 
   return true;
+}
+
+// Reads IFDs recursively from the first IFD. Returns true if successful.
+bool Exif::ReadIfds() {
+  return ReadIfds(first_ifd_offset());
+}
+
+// Reads IFDs recursively from the specified ifd_offset. Returns true if
+// successful.
+bool Exif::ReadIfds(int ifd_offset) {
+  file()->seek(ifd_offset);
+  // Reads the 2-byte count of the number of directory entries.
+  int entry_count = qitty_utils::ToInt(ReadFromFile(2));
+  qDebug() << "Entry count: " << entry_count;
+  qDebug() << "--------------------------------";
+  // Reads a sequence of 12-byte field entries.
+  for (int i = 0; i < entry_count; ++i) {
+    // Reads the tag that identifies the field.
+    QByteArray tag = ReadFromFile(2);
+    qDebug() << "Tag: " << tag.toHex();
+    // Reads the field type.
+    QByteArray type = ReadFromFile(2);
+    qDebug() << "Type: " << type.toHex();
+    if (qitty_utils::ToInt(type) > 12) {
+      qDebug() << "Error occurs!";
+      return false;
+    }
+    // Reads the number of values of the indicated Type.
+    QByteArray count = ReadFromFile(4);
+    qDebug() << "Count: " << count.toHex();
+    // Reads the value/offset.
+    QByteArray value_offset = ReadFromFile(4);
+    qDebug() << "Value offset: " << value_offset.toHex();
+    qDebug() << "--------------------------------";
+  }
+  // Reads the offset of the next IFD.
+  int next_ifd_offset = qitty_utils::ToInt(ReadFromFile(4));
+  if (next_ifd_offset == -1) {
+    return false;
+  } else if (next_ifd_offset == 0) {
+    return true;
+  } else {
+    if (file_type() == kJpegFileType)
+      next_ifd_offset = next_ifd_offset + first_ifd_offset() - 8;
+    qDebug() << "Next IFD offset: " << next_ifd_offset;
+    qDebug() << "################################";
+    return ReadIfds(next_ifd_offset);
+  }
 }
 
 // Reads at most max_size bytes from the tracked file object, and returns the

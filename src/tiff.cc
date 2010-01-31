@@ -40,7 +40,7 @@ bool Tiff::Open(const QString &file_path) {
 
   // Creates the Exif object.
   Exif *exif = new Exif(this);
-  if (exif->Init(file(), 0))
+  if (exif->Init(file(), 0, kTiffFileType))
     set_exif(exif);
 
   return true;
