@@ -47,15 +47,13 @@ bool Tiff::Open(const QString &file_path) {
     return false;
 
   // Further identifies the file whether is a TIFF file by reading the next two
-  // bytes in the image file header. The value of these two bytes should equal
-  // to 42 in decimal, which means the two bytes is represented as "002a" in
-  // hexidecimal in big-endian byte order.
+  // bytes in the image file header. The value should equal to 42 in decimal.
   QByteArray fourty_two_bytes = file.read(2);
   // Coverts the bytes to big-endian byte order if the TIFF file uses the
   // little-endian byte order.
   if (endianness() == kLittleEndians)
     fourty_two_bytes = qitty_utils::ReverseByteArray(fourty_two_bytes);
-  if (fourty_two_bytes.toHex() != "002a")
+  if (!qitty_utils::EqualToInt(fourty_two_bytes, 42))
     return false;
   return true;
 }
