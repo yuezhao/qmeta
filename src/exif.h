@@ -38,8 +38,13 @@ class Exif : public QObject {
   Q_OBJECT
 
  public:
-  // TIFF Rev. 6.0 attribute information used in Exif, represented in decimal.
   enum TagNames {
+    // Exif-specific IFD.
+    kExifIfdPointer = 34665,
+    kGpsInfoIfdPointer = 34853,
+    kInteroperabilityIfdPointer = 40965,
+
+    // TIFF Rev. 6.0 attribute information used in Exif, represented in decimal.
     // Tags relating to image data structure.
     kImageWidth = 256,  // Image width
     kImageLength = 257,  // Image height
@@ -74,6 +79,72 @@ class Exif : public QObject {
     kSoftware = 305,  // Software used
     kArtist = 315,  // Person who created the image
     kCopyright = 33432,  // Copyright holder
+
+    // The attribute information recorded in the Exif IFD.
+    // Tags relating to version.
+    kExifVersion = 36864,  // Exif version
+    kFlashpixVersion = 40960,  // Supported Flashpix version
+    // Tag relating to image data characteristics.
+    kColorSpace = 40961,  // Color space information
+    // Tags relating to image configuration.
+    kComponentsConfiguration = 37121,  // Meaning of each component
+    kCompressedBitsPerPixel = 37122,  // Image compression mode
+    kPixelXDimension = 40962,  // Valid image width
+    kPixelYDimension = 40963,  // Valid image height
+    // Tags relating to user information.
+    kMakerNote = 37500,  // Manufacturer notes
+    kUserComment = 37510,  // User comments
+    // Tags relating to related file information.
+    kRelatedSoundFile = 40964,
+    // Tags relating to date and time.
+    kDateTimeOriginal = 36867,  // Date and time of original data generation
+    kDateTimeDigitized = 36868,  // Date and time of digital data generation
+    kSubSecTime = 37520,  // Date Time subseconds
+    kSubSecTimeOriginal = 37521,  // Date Time Original subseconds
+    kSubSecTimeDigitized = 37522,  // Date Time Digitized subseconds
+    // Tags relating to picture-taking conditions.
+    kExposureTime = 33434,  // Exposure time
+    kFNumber = 33437,  // F number
+    kExposureProgram = 34850,  // Exposure program
+    kSpectralSensitivity = 34852,  // Spectral sensitivity
+    kISOSpeedRatings = 34855,  // ISO speed rating
+    kOECF = 34856,  // Optoelectric conversion factor
+    kShutterSpeedValue = 37377,  // Shutter speed
+    kApertureValue = 37378,  // Aperture
+    kBrightnessValue = 37379,  // Brightness
+    kExposureBiasValue = 37380,  // Exposure bias
+    kMaxApertureValue = 37381,  // Maximum lens aperture
+    kSubjectDistance = 37382,  // Subject distance
+    kMeteringMode = 37383,  // Metering mode
+    kLightSource = 37384,  // Light source
+    kFlash = 37385,  // Flash
+    kFocalLength = 37386,  //Lens focal length
+    kSubjectArea = 37396,  // Subject area
+    kFlashEnergy = 41483,  // Flash energy
+    kSpatialFrequencyResponse = 41484,  // Spatial frequency response
+    kFocalPlaneXResolution = 41486,  // Focal plane X resolution
+    kFocalPlaneYResolution = 41487,  // Focal plane Y resolution
+    kFocalPlaneResolutionUnit = 41488,  // Focal plane resolution unit
+    kSubjectLocation = 41492,  // Subject location
+    kExposureIndex = 41493,  // Exposure index
+    kSensingMethod = 41495,  // Sensing method
+    kFileSource = 41728,  // File source
+    kSceneType = 41729,  // Scene type
+    kCFAPattern = 41730,  // CFA pattern
+    kCustomRendered = 41985,  // Custom image processing
+    kExposureMode = 41986,  // Exposure mode
+    kWhiteBalance = 41987,  // White balance
+    kDigitalZoomRatio = 41988,  //Digital zoom ratio
+    kFocalLengthIn35mmFilm = 41989,  // Focal length in 35 mm film
+    kSceneCaptureType = 41990,  // Scene capture type
+    kGainControl = 41991,  // Gain control
+    kContrast = 41992,  // Contrast
+    kSaturation = 41993,  // Saturation
+    kSharpness = 41994,  // Sharpness
+    kDeviceSettingDescription = 41995,  // Device settings description
+    kSubjectDistanceRange = 41996,  // Subject distance range
+    // Other tags.
+    kImageUniqueID = 42016,  // Unique image ID
   };
 
   explicit Exif(QObject *parent = NULL);
@@ -106,6 +177,7 @@ class Exif : public QObject {
     kSrationalFieldType = 10,
   };
 
+  void InitTagNames();
   QByteArray ReadFromFile(const int max_size);
   QByteArray ReadIfdEntryValue(const int offset, const int bytes);
 
