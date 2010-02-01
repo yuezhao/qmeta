@@ -145,6 +145,39 @@ class Exif : public QObject {
     kSubjectDistanceRange = 41996,  // Subject distance range
     // Other tags.
     kImageUniqueID = 42016,  // Unique image ID
+
+    // The attribute information recorded in the GPS Info IFD.
+    kGPSVersionID = 0,  // GPS tag version
+    kGPSLatitudeRef = 1,  // North or South Latitude
+    kGPSLatitude = 2,  // Latitude
+    kGPSLongitudeRef = 3,  // East or West Longitude
+    kGPSLongitude = 4,  // Longitude
+    kGPSAltitudeRef = 5,  // Altitude reference
+    kGPSAltitude = 6,  // Altitude
+    kGPSTimeStamp = 7,  // GPS time (atomic clock)
+    kGPSSatellites = 8,  // GPS satellites used for measurement
+    kGPSStatus = 9,  // GPS receiver status
+    kGPSMeasureMode = 10,  // GPS measurement mode
+    kGPSDOP = 11,  // Measurement precision
+    kGPSSpeedRef = 12,  // Speed unit
+    kGPSSpeed = 13,  // Speed of GPS receiver
+    kGPSTrackRef = 14,  // Reference for direction of movement
+    kGPSTrack = 15,  // Direction of movement
+    kGPSImgDirectionRef = 16,  // Reference for direction of image
+    kGPSImgDirection = 17,  // Direction of image
+    kGPSMapDatum = 18,  // Geodetic survey data used
+    kGPSDestLatitudeRef = 19,  // Reference for latitude of destination
+    kGPSDestLatitude = 20,  // Latitude of destination
+    kGPSDestLongitudeRef = 21,  // Reference for longitude of destination
+    kGPSDestLongitude = 22,  // Longitude of destination
+    kGPSDestBearingRef = 23,  // Reference for longitude of destination
+    kGPSDestBearing = 24,  // Bearing of destination
+    kGPSDestDistanceRef = 25,  // Reference for distance to destination
+    kGPSDestDistance = 26,  // Distance to destination
+    kGPSProcessingMethod = 27,  // Name of GPS processing method
+    kGPSAreaInformation = 28,  // Name of GPS area
+    kGPSDateStamp = 29,  // GPS date
+    kGPSDifferential = 30,  // GPS differential correction
   };
 
   explicit Exif(QObject *parent = NULL);

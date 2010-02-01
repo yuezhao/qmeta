@@ -172,6 +172,38 @@ void Exif::InitTagNames() {
                     tr("Device Setting Description"));
   tag_names->insert(kSubjectDistanceRange, tr("Subject Distance Range"));
   tag_names->insert(kImageUniqueID, tr("Image Unique ID"));
+  // The attribute information recorded in the GPS Info IFD.
+  tag_names->insert(kGPSVersionID, tr("GPS Version ID"));
+  tag_names->insert(kGPSLatitudeRef, tr("GPS Latitude Ref"));
+  tag_names->insert(kGPSLatitude, tr("GPS Latitude"));
+  tag_names->insert(kGPSLongitudeRef, tr("GPS Longitude Ref"));
+  tag_names->insert(kGPSLongitude, tr("GPS Longitude"));
+  tag_names->insert(kGPSAltitudeRef, tr("GPS Altitude Ref"));
+  tag_names->insert(kGPSAltitude, tr("GPS Altitude"));
+  tag_names->insert(kGPSTimeStamp, tr("GPS Time Stamp"));
+  tag_names->insert(kGPSSatellites, tr("GPS Satellites"));
+  tag_names->insert(kGPSStatus, tr("GPS Status"));
+  tag_names->insert(kGPSMeasureMode, tr("GPS Measure Mode"));
+  tag_names->insert(kGPSDOP, tr("GPS DOP"));
+  tag_names->insert(kGPSSpeedRef, tr("GPS Speed Ref"));
+  tag_names->insert(kGPSSpeed, tr("GPS Speed"));
+  tag_names->insert(kGPSTrackRef, tr("GPS Track Ref"));
+  tag_names->insert(kGPSTrack, tr("GPS Track"));
+  tag_names->insert(kGPSImgDirectionRef, tr("GPS Img Direction Ref"));
+  tag_names->insert(kGPSImgDirection, tr("GPS Img Direction"));
+  tag_names->insert(kGPSMapDatum, tr("GPS Map Datum"));
+  tag_names->insert(kGPSDestLatitudeRef, tr("GPS Dest Latitude Ref"));
+  tag_names->insert(kGPSDestLatitude, tr("GPS Dest Latitude"));
+  tag_names->insert(kGPSDestLongitudeRef, tr("GPS Dest Longitude Ref"));
+  tag_names->insert(kGPSDestLongitude, tr("GPS Dest Longitude"));
+  tag_names->insert(kGPSDestBearingRef, tr("GPS Dest Bearing Ref"));
+  tag_names->insert(kGPSDestBearing, tr("GPS Dest Bearing"));
+  tag_names->insert(kGPSDestDistanceRef, tr("GPS Dest Distance Ref"));
+  tag_names->insert(kGPSDestDistance, tr("GPS Dest Distance"));
+  tag_names->insert(kGPSProcessingMethod, tr("GPS Processing Method"));
+  tag_names->insert(kGPSAreaInformation, tr("GPS Area Information"));
+  tag_names->insert(kGPSDateStamp, tr("GPS Date Stamp"));
+  tag_names->insert(kGPSDifferential, tr("GPS Differential"));
   set_tag_names(tag_names);
 }
 
@@ -251,6 +283,10 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
 
   if (tag_name == kExifIfdPointer) {
     qDebug() << "^^^^^^^^^^^^ Exif ^^^^^^^^^^^^^^";
+    ReadIfds(value.toHex().toULong(NULL, 16));
+    qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
+  } else if (tag_name == kGpsInfoIfdPointer) {
+    qDebug() << "^^^^^^^^^^^^ GPS ^^^^^^^^^^^^^^^";
     ReadIfds(value.toHex().toULong(NULL, 16));
     qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
   }
