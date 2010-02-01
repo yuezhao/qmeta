@@ -30,7 +30,42 @@
 
 namespace qmeta {
 
-Exif::Exif(QObject *parent) : QObject(parent) {}
+Exif::Exif(QObject *parent) : QObject(parent) {
+  QHash<TagNames, QString> *tag_names = new QHash<TagNames, QString>;
+  tag_names->insert(kImageWidth, tr("Image Width"));
+  tag_names->insert(kImageLength, tr("Image Height"));
+  tag_names->insert(kBitsPerSample, tr("Bits Per Sample"));
+  tag_names->insert(kCompression, tr("Compression"));
+  tag_names->insert(kPhotometricInterpretation,
+                      tr("Photometric Interpretation"));
+  tag_names->insert(kOrientation, tr("Orientation"));
+  tag_names->insert(kSamplesPerPixel, tr("Samples Per Pixel"));
+  tag_names->insert(kPlanarConfiguration, tr("Planar Configuration"));
+  tag_names->insert(kYCbCrSubSampling, tr("YCbCr Sub Sampling"));
+  tag_names->insert(kYCbCrPositioning, tr("YCbCr Positioning"));
+  tag_names->insert(kXResolution, tr("X-Resolution"));
+  tag_names->insert(kYResolution, tr("Y-Resolution"));
+  tag_names->insert(kResolutionUnit, tr("Resolution Unit"));
+  tag_names->insert(kStripOffsets, tr("Strip Offsets"));
+  tag_names->insert(kRowsPerStrip, tr("Rows Per Strip"));
+  tag_names->insert(kStripByteCounts, tr("Strip Byte Counts"));
+  tag_names->insert(kJPEGInterchangeFormat, tr("JPEG Interchange Format"));
+  tag_names->insert(kJPEGInterchangeFormatLength,
+                      tr("JPEG Interchange Format Length"));
+  tag_names->insert(kTransferFunction, tr("Transfer Function"));
+  tag_names->insert(kWhitePoint, tr("White Point"));
+  tag_names->insert(kPrimaryChromaticities, tr("Primary Chromaticities"));
+  tag_names->insert(kYCbCrCoefficients, tr("YCbCr Coefficients"));
+  tag_names->insert(kReferenceBlackWhite, tr("Reference Black White"));
+  tag_names->insert(kDateTime, tr("Date Time"));
+  tag_names->insert(kImageDescription, tr("Image Description"));
+  tag_names->insert(kMake, tr("Make"));
+  tag_names->insert(kModel, tr("Model"));
+  tag_names->insert(kSoftware, tr("Software"));
+  tag_names->insert(kArtist, tr("Artist"));
+  tag_names->insert(kCopyright, tr("Copyright"));
+  set_tag_names(tag_names);
+}
 
 // Initializes the Exif object by storing the specified file and
 // tiff_header_offset. It also determines the byte order and the offset of
@@ -52,12 +87,11 @@ bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
 
   // Further identifies whether the specified file has a valid TIFF header.
   // Reads the next two bytes which should have the value of 42 in decimal.
-  QByteArray fourty_two = ReadFromFile(2);
-  if (!qitty_utils::EqualToInt(fourty_two, 42))
+  if (ReadFromFile(2).toHex().toInt(NULL, 16) != 42)
     return false;
 
   // Reads the next four bytes to determine the offset of the first IFD.
-  int first_ifd_offset = qitty_utils::ToInt(ReadFromFile(4));
+  int first_ifd_offset = ReadFromFile(4).toHex().toInt(NULL, 16);
   // Sets the offset to the current position if the read value equals to 8.
   // The reason is for JPEG files, if the TIFF header is followed immediately
   // by the first IFD, it is written as 00000008 in hexidecimal.
@@ -70,28 +104,91 @@ bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
   return true;
 }
 
-// Reads a 12-byte IFD entry at the specified ifd_entry_offset. Returns true
-// if successful.
+// Reads a 12-byte IFD entry at the specified ifd_entry_offset. Returns false
+// only if the format is not correct.
 bool Exif::ReadIfdEntry(int ifd_entry_offset) {
   file()->seek(ifd_entry_offset);
   // Reads the tag that identifies the field.
   QByteArray tag = ReadFromFile(2);
-  qDebug() << "Tag: " << tag.toHex();
-  // Reads the field type.
-  QByteArray type = ReadFromFile(2);
-  qDebug() << "Type: " << type.toHex();
-  if (qitty_utils::ToInt(type) > 12) {
-    qDebug() << "Error occurs!";
-    return false;
-  }
-  // Reads the number of values of the indicated Type.
-  QByteArray count = ReadFromFile(4);
-  qDebug() << "Count: " << count.toHex();
-  // Reads the value/offset.
-  QByteArray value_offset = ReadFromFile(4);
-  qDebug() << "Value offset: " << value_offset.toHex();
+  TagNames tag_key = static_cast<TagNames>(tag.toHex().toInt(NULL, 16));
+  if (tag_names()->contains(tag_key))
+    qDebug() << "Tag:" << tag_names()->value(tag_key);
+  else
+    return true;
 
+  // Reads the field type.
+  int type = ReadFromFile(2).toHex().toInt(NULL, 16);
+  // Reads the number of values of the indicated Type.
+  int count = ReadFromFile(4).toHex().toInt(NULL, 16);
+
+  // Retrieves the value of the IFD entry.
+  int bytes;  // The number of bytes used for the entry value.
+  QByteArray value;  // The entry value.
+  switch (static_cast<FieldTypes>(type)) {
+    case kByteFiledType:
+      qDebug() << "Type: BYTE";
+      bytes = 1 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex().toUShort(NULL, 16);
+      break;
+    case kAsciiFiedType:
+      qDebug() << "Type: ASCII";
+      bytes = 1 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << QString(value);
+      break;
+    case kShortFiledType:
+      qDebug() << "Type: SHORT";
+      bytes = 2 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex().toUShort(NULL, 16);
+      break;
+    case kLongFieldType:
+      qDebug() << "Type: LONG";
+      bytes = 4 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex().toULong(NULL, 16);
+      break;
+    case kRationalFieldType:
+      qDebug() << "Type: RATIONAL";
+      bytes = 8 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex();
+      break;
+    case kUndefinedFieldType:
+      qDebug() << "Type: UNDEFINED";
+      bytes = 1 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << QString(value);
+      break;
+    case kSlongFieldType:
+      qDebug() << "Type: SLONG";
+      bytes = 4 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex().toLong(NULL, 16);
+      break;
+    case kSrationalFieldType:
+      qDebug() << "Type: SRATIONAL";
+      bytes = 8 * count;
+      value = ReadIfdEntryValue(file()->pos(), bytes);
+      qDebug() << value.toHex();
+      break;
+    default:
+      return false;
+  }
+  qDebug() << "--------------------------------";
   return true;
+}
+
+// Returns the value of the IFD entry from the specified value_offset.
+QByteArray Exif::ReadIfdEntryValue(const int value_offset, const int bytes) {
+  file()->seek(value_offset);
+  // Jumps to the offset if the specified bytes is greater than 4.
+  if (bytes > 4) {
+    int offset = ReadFromFile(4).toHex().toInt(NULL, 16) + tiff_header_offset();
+    file()->seek(offset);
+  }
+  return file()->read(bytes);
 }
 
 // Reads IFDs recursively from the first IFD. Returns true if successful.
@@ -104,18 +201,20 @@ bool Exif::ReadIfds() {
 bool Exif::ReadIfds(int ifd_offset) {
   file()->seek(ifd_offset);
   // Reads the 2-byte count of the number of directory entries.
-  int entry_count = qitty_utils::ToInt(ReadFromFile(2));
+  int entry_count = ReadFromFile(2).toHex().toInt(NULL, 16);
   qDebug() << "Entry count: " << entry_count;
   qDebug() << "--------------------------------";
+
   // Reads a sequence of 12-byte field entries.
   for (int i = 0; i < entry_count; ++i) {
-    int ifd_entry_offset = (ifd_offset + 2) + i * 12;
+    int ifd_entry_offset = (ifd_offset + 2) + (i * 12);
     if (!ReadIfdEntry(ifd_entry_offset))
       return false;
-    qDebug() << "--------------------------------";
   }
+
   // Reads the offset of the next IFD.
-  int next_ifd_offset = qitty_utils::ToInt(ReadFromFile(4));
+  file()->seek((ifd_offset + 2) + (entry_count * 12));
+  int next_ifd_offset = ReadFromFile(4).toHex().toInt(NULL, 16);
   if (next_ifd_offset == -1) {
     return false;
   } else if (next_ifd_offset == 0) {

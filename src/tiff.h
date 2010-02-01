@@ -33,21 +33,6 @@ namespace qmeta {
 
 class Tiff : public FileType {
  public:
-  enum FieldTypes {
-    kByteFiledType = 1,
-    kAsciiFiedType = 2,
-    kShortFiledType = 3,
-    kLongFieldType = 4,
-    kRationalFieldType = 5,
-    kSbyteFieldType = 6,
-    kUndefinedFieldType = 7,
-    kSshortFieldType = 8,
-    kSlongFieldType = 9,
-    kSrationalFieldType = 10,
-    kFloatFieldType = 11,
-    kDoubleFieldType = 12,
-  };
-
   explicit Tiff(QObject *parent = NULL);
   bool Open(const QString &file_path);
 };

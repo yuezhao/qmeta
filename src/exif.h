@@ -30,11 +30,52 @@
 #include "identifiers.h"
 
 class QFile;
+template<class T, class U> class QHash;
 
 namespace qmeta {
 
 class Exif : public QObject {
+  Q_OBJECT
+
  public:
+  // TIFF Rev. 6.0 attribute information used in Exif, represented in decimal.
+  enum TagNames {
+    // Tags relating to image data structure.
+    kImageWidth = 256,  // Image width
+    kImageLength = 257,  // Image height
+    kBitsPerSample  = 258,  // Number of bits per component
+    kCompression = 259,  // Compression scheme
+    kPhotometricInterpretation = 262,  // Pixel composition
+    kOrientation = 274,  // Orientation of image
+    kSamplesPerPixel = 277,  // Number of components
+    kPlanarConfiguration = 284,  // Image data arrangement
+    kYCbCrSubSampling = 530,  // Subsampling ratio of Y to C
+    kYCbCrPositioning = 531,  // Y and C positioning
+    kXResolution = 282,  // Image resolution in width direction
+    kYResolution = 283,  // Image resolution in height direction
+    kResolutionUnit = 296,  // Unit of X and Y resolution
+    // Tags relating to recording offset.
+    kStripOffsets = 273,  // Image data location
+    kRowsPerStrip = 278,  // Number of rows per strip
+    kStripByteCounts = 279,  // Bytes per compressed strip
+    kJPEGInterchangeFormat = 513,  // Offset to JPEG SOI
+    kJPEGInterchangeFormatLength = 514,  // Bytes of JPEG data
+    // Tags relating to image data characteristics.
+    kTransferFunction = 301,  // Transfer function
+    kWhitePoint = 318,  // White point chromaticity
+    kPrimaryChromaticities = 319,  // Chromaticities of primaries
+    kYCbCrCoefficients = 529,  // Color space transformation matrix coefficients
+    kReferenceBlackWhite = 532,  // Pair of black and white reference values
+    // Other tags.
+    kDateTime = 306,  // File change date and time
+    kImageDescription = 270,  // Image title
+    kMake = 271,  // Image input equipment manufacturer
+    kModel = 272,  // Image input equipment model
+    kSoftware = 305,  // Software used
+    kArtist = 315,  // Person who created the image
+    kCopyright = 33432,  // Copyright holder
+  };
+
   explicit Exif(QObject *parent = NULL);
   bool Init(QFile *file, const int tiff_header_offset, FileTypes type);
   bool ReadIfdEntry(int ifd_entry_offset);
@@ -42,10 +83,38 @@ class Exif : public QObject {
   bool ReadIfds(int ifd_offset);
 
  private:
+  // Field types are used in Exif.
+  enum FieldTypes {
+    // An 8-bit unsigned integer.
+    kByteFiledType = 1,
+    // An 8-bit byte containing one 7-bit ASCII code. The final byte is
+    // terminated with NULL.
+    kAsciiFiedType = 2,
+    // A 16-bit (2-byte) unsigned integer.
+    kShortFiledType = 3,
+    // A 32-bit (4-byte) unsigned integer.
+    kLongFieldType = 4,
+    // Two LONGs. The first LONG is the numerator and the second LONG expresses
+    // the denominator.
+    kRationalFieldType = 5,
+    // An 8-bit byte that can take any value depending ont he field definition.
+    kUndefinedFieldType = 7,
+    // A 32-bit (4-byte) signed integer (2's complement notation)
+    kSlongFieldType = 9,
+    // Two SLONGs. The first SLONG is the numerator and the second SLONG is the
+    // denominator.
+    kSrationalFieldType = 10,
+  };
+
   QByteArray ReadFromFile(const int max_size);
+  QByteArray ReadIfdEntryValue(const int offset, const int bytes);
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endian) { endianness_ = endian; }
+  QHash<TagNames, QString>* tag_names() const { return tag_names_; }
+  void set_tag_names(QHash<TagNames, QString> *tag_names) {
+    tag_names_ = tag_names;
+  }
   QFile* file() const { return file_; }
   void set_file(QFile *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
@@ -57,6 +126,8 @@ class Exif : public QObject {
 
   // The byte order of the TIFF file.
   Endianness endianness_;
+  // The tag names to read for human.
+  QHash<TagNames, QString> *tag_names_;
   // Tracks the file containing this EXIF data.
   QFile *file_;
   // The offset of the first IFD.
