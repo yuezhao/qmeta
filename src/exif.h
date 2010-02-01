@@ -37,6 +37,7 @@ class Exif : public QObject {
  public:
   explicit Exif(QObject *parent = NULL);
   bool Init(QFile *file, const int tiff_header_offset, FileTypes type);
+  bool ReadIfdEntry(int ifd_entry_offset);
   bool ReadIfds();
   bool ReadIfds(int ifd_offset);
 

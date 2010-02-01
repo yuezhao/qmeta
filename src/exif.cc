@@ -70,6 +70,30 @@ bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
   return true;
 }
 
+// Reads a 12-byte IFD entry at the specified ifd_entry_offset. Returns true
+// if successful.
+bool Exif::ReadIfdEntry(int ifd_entry_offset) {
+  file()->seek(ifd_entry_offset);
+  // Reads the tag that identifies the field.
+  QByteArray tag = ReadFromFile(2);
+  qDebug() << "Tag: " << tag.toHex();
+  // Reads the field type.
+  QByteArray type = ReadFromFile(2);
+  qDebug() << "Type: " << type.toHex();
+  if (qitty_utils::ToInt(type) > 12) {
+    qDebug() << "Error occurs!";
+    return false;
+  }
+  // Reads the number of values of the indicated Type.
+  QByteArray count = ReadFromFile(4);
+  qDebug() << "Count: " << count.toHex();
+  // Reads the value/offset.
+  QByteArray value_offset = ReadFromFile(4);
+  qDebug() << "Value offset: " << value_offset.toHex();
+
+  return true;
+}
+
 // Reads IFDs recursively from the first IFD. Returns true if successful.
 bool Exif::ReadIfds() {
   return ReadIfds(first_ifd_offset());
@@ -85,22 +109,9 @@ bool Exif::ReadIfds(int ifd_offset) {
   qDebug() << "--------------------------------";
   // Reads a sequence of 12-byte field entries.
   for (int i = 0; i < entry_count; ++i) {
-    // Reads the tag that identifies the field.
-    QByteArray tag = ReadFromFile(2);
-    qDebug() << "Tag: " << tag.toHex();
-    // Reads the field type.
-    QByteArray type = ReadFromFile(2);
-    qDebug() << "Type: " << type.toHex();
-    if (qitty_utils::ToInt(type) > 12) {
-      qDebug() << "Error occurs!";
+    int ifd_entry_offset = (ifd_offset + 2) + i * 12;
+    if (!ReadIfdEntry(ifd_entry_offset))
       return false;
-    }
-    // Reads the number of values of the indicated Type.
-    QByteArray count = ReadFromFile(4);
-    qDebug() << "Count: " << count.toHex();
-    // Reads the value/offset.
-    QByteArray value_offset = ReadFromFile(4);
-    qDebug() << "Value offset: " << value_offset.toHex();
     qDebug() << "--------------------------------";
   }
   // Reads the offset of the next IFD.
