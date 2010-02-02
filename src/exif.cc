@@ -31,7 +31,7 @@
 namespace qmeta {
 
 Exif::Exif(QObject *parent) : QObject(parent) {
-  InitFieldTypeUnit();
+  InitTypeByteUnit();
   InitTagNames();
 }
 
@@ -73,17 +73,17 @@ bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
 }
 
 // Initializes the byte unit for field types used in Exif.
-void Exif::InitFieldTypeUnit() {
-  QHash<FieldTypes, int> field_type_byte_unit;
-  field_type_byte_unit.insert(kByteFiledType, 1);
-  field_type_byte_unit.insert(kAsciiFiedType, 1);
-  field_type_byte_unit.insert(kShortFiledType, 2);
-  field_type_byte_unit.insert(kLongFieldType, 4);
-  field_type_byte_unit.insert(kRationalFieldType, 8);
-  field_type_byte_unit.insert(kUndefinedFieldType, 1);
-  field_type_byte_unit.insert(kSlongFieldType, 4);
-  field_type_byte_unit.insert(kSrationalFieldType, 8);
-  set_field_type_byte_unit(field_type_byte_unit);
+void Exif::InitTypeByteUnit() {
+  QHash<Type, int> type_byte_unit;
+  type_byte_unit.insert(kByteType, 1);
+  type_byte_unit.insert(kAsciiType, 1);
+  type_byte_unit.insert(kShortType, 2);
+  type_byte_unit.insert(kLongType, 4);
+  type_byte_unit.insert(kRationalType, 8);
+  type_byte_unit.insert(kUndefinedType, 1);
+  type_byte_unit.insert(kSlongType, 4);
+  type_byte_unit.insert(kSrationalType, 8);
+  set_type_byte_unit(type_byte_unit);
 }
 
 // Initializes tag names used in Exif.
@@ -235,11 +235,9 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
 
   // Reads the field type. Returns false if the type is not supported.
   int type_number = ReadFromFile(2).toHex().toInt(NULL, 16);
-  FieldTypes type = static_cast<FieldTypes>(type_number);
-  if (!field_type_byte_unit().contains(type))
+  Type type = static_cast<Type>(type_number);
+  if (!type_byte_unit().contains(type))
     return false;
-  else
-    int type_byte_unit = field_type_byte_unit().value(type);
 
   // Reads the number of values of the indicated Type.
   int count = ReadFromFile(4).toHex().toInt(NULL, 16);
@@ -247,36 +245,36 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
   QByteArray value = ReadIfdEntryValue(ifd_entry_offset, type, count);
 
   switch (type) {
-    case kByteFiledType:
+    case kByteType:
       qDebug() << "Type: BYTE";
       qDebug() << value.toHex().toUShort(NULL, 16);
       break;
-    case kAsciiFiedType:
+    case kAsciiType:
       qDebug() << "Type: ASCII";
       qDebug() << QString(value);
       break;
-    case kShortFiledType:
+    case kShortType:
       qDebug() << "Type: SHORT";
       qDebug() << value.toHex().toUShort(NULL, 16);
       break;
-    case kLongFieldType:
+    case kLongType:
       qDebug() << "Type: LONG";
       qDebug() << value.toHex().toUInt(NULL, 16);
       break;
-    case kRationalFieldType:
+    case kRationalType:
       qDebug() << "Type: RATIONAL";
       qDebug() << value.toHex();
       break;
-    case kUndefinedFieldType:
+    case kUndefinedType:
       qDebug() << "Type: UNDEFINED";
       qDebug() << value.toHex();
       qDebug() << QString(value);
       break;
-    case kSlongFieldType:
+    case kSlongType:
       qDebug() << "Type: SLONG";
       qDebug() << value.toHex().toInt(NULL, 16);
       break;
-    case kSrationalFieldType:
+    case kSrationalType:
       qDebug() << "Type: SRATIONAL";
       qDebug() << value.toHex();
       break;
@@ -297,14 +295,14 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
 
 // Returns the value of the IFD entry from the specified value_offset.
 QByteArray Exif::ReadIfdEntryValue(const int ifd_entry_offset,
-                                   const FieldTypes type,
+                                   const Type type,
                                    const int count) {
   // Retrieves the byte unit of the specified type.
-  int type_byte_unit = field_type_byte_unit().value(type);
+  int byte_unit = type_byte_unit().value(type);
   // Determines the offset for the value/offset field.
   int offset = ifd_entry_offset + 8;
   // Calculates the number of bytes used for the entry value.
-  int byte_count = type_byte_unit * count;
+  int byte_count = byte_unit * count;
   // Calculates the real offset if the number of bytes is greater than 4.
   if (byte_count > 4)
     offset = ReadFromFile(4).toHex().toInt(NULL, 16) + tiff_header_offset();
@@ -312,17 +310,17 @@ QByteArray Exif::ReadIfdEntryValue(const int ifd_entry_offset,
   file()->seek(offset);
 
   QByteArray value;
-  if (type_byte_unit == 1) {
+  if (byte_unit == 1) {
     value = file()->read(byte_count);
   } else {
     for (int i = 0; i < count; ++i) {
       // If the specified type is RATIONAL or SRATIONAL, read 4 bytes twice
       // for double LONG or double SLONG, respectively.
-      if (type_byte_unit == 8) {
+      if (byte_unit == 8) {
         value.append(ReadFromFile(4));
         value.append(ReadFromFile(4));
       } else {
-        value.append(ReadFromFile(type_byte_unit));
+        value.append(ReadFromFile(byte_unit));
       }
     }
   }

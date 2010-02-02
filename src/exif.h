@@ -188,43 +188,38 @@ class Exif : public QObject {
 
  private:
   // Field types are used in Exif.
-  enum FieldTypes {
+  enum Type {
     // An 8-bit unsigned integer.
-    kByteFiledType = 1,
+    kByteType = 1,
     // An 8-bit byte containing one 7-bit ASCII code. The final byte is
     // terminated with NULL.
-    kAsciiFiedType = 2,
+    kAsciiType = 2,
     // A 16-bit (2-byte) unsigned integer.
-    kShortFiledType = 3,
+    kShortType = 3,
     // A 32-bit (4-byte) unsigned integer.
-    kLongFieldType = 4,
+    kLongType = 4,
     // Two LONGs. The first LONG is the numerator and the second LONG expresses
     // the denominator.
-    kRationalFieldType = 5,
+    kRationalType = 5,
     // An 8-bit byte that can take any value depending ont he field definition.
-    kUndefinedFieldType = 7,
+    kUndefinedType = 7,
     // A 32-bit (4-byte) signed integer (2's complement notation)
-    kSlongFieldType = 9,
+    kSlongType = 9,
     // Two SLONGs. The first SLONG is the numerator and the second SLONG is the
     // denominator.
-    kSrationalFieldType = 10,
+    kSrationalType = 10,
   };
 
-  void InitFieldTypeUnit();
+  void InitTypeByteUnit();
   void InitTagNames();
   QByteArray ReadFromFile(const int max_size);
-  QByteArray ReadIfdEntryValue(const int ifd_entry_offset,
-                               const FieldTypes type,
+  QByteArray ReadIfdEntryValue(const int ifd_entry_offset, const Type type,
                                const int count);
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endian) { endianness_ = endian; }
-  QHash<FieldTypes, int> field_type_byte_unit() const {
-    return field_type_byte_unit_;
-  }
-  void set_field_type_byte_unit(QHash<FieldTypes, int> &unit) {
-    field_type_byte_unit_ = unit;
-  }
+  QHash<Type, int> type_byte_unit() const { return type_byte_unit_; }
+  void set_type_byte_unit(QHash<Type, int> unit) { type_byte_unit_ = unit; }
   QFile* file() const { return file_; }
   void set_file(QFile *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
@@ -232,16 +227,14 @@ class Exif : public QObject {
   FileTypes file_type() const { return file_type_; }
   void set_file_type(FileTypes type) { file_type_ = type; }
   QHash<Tag, QString> tag_names() const { return tag_names_; }
-  void set_tag_names(QHash<Tag, QString> tag_names) {
-    tag_names_ = tag_names;
-  }
+  void set_tag_names(QHash<Tag, QString> tag_names) { tag_names_ = tag_names; }
   int tiff_header_offset() const { return tiff_header_offset_; }
   void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
 
   // The byte order of the TIFF file.
   Endianness endianness_;
   // The byte unit for filed types used in Exif.
-  QHash<FieldTypes, int> field_type_byte_unit_;
+  QHash<Type, int> type_byte_unit_;
   // Tracks the file containing this EXIF data.
   QFile *file_;
   // The offset of the first IFD.
