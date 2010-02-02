@@ -210,12 +210,20 @@ class Exif : public QObject {
     kSrationalFieldType = 10,
   };
 
+  void InitFieldTypeUnit();
   void InitTagNames();
   QByteArray ReadFromFile(const int max_size);
-  QByteArray ReadIfdEntryValue(const int offset, const int bytes);
+  QByteArray ReadIfdEntryValue(const int ifd_entry_offset,
+                               const FieldTypes type,
+                               const int count);
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endian) { endianness_ = endian; }
+  QHash<FieldTypes, int> field_type_byte_unit() const {
+    return field_type_byte_unit_;
+  }
+  void set_field_type_byte_unit(QHash<FieldTypes, int> &unit) {
+    field_type_byte_unit_ = unit;
   }
   QFile* file() const { return file_; }
   void set_file(QFile *file) { file_ = file; }
@@ -232,6 +240,8 @@ class Exif : public QObject {
 
   // The byte order of the TIFF file.
   Endianness endianness_;
+  // The byte unit for filed types used in Exif.
+  QHash<FieldTypes, int> field_type_byte_unit_;
   // Tracks the file containing this EXIF data.
   QFile *file_;
   // The offset of the first IFD.
