@@ -31,8 +31,9 @@
 namespace qmeta {
 
 Exif::Exif(QObject *parent) : QObject(parent) {
-  InitTypeByteUnit();
   InitTagNames();
+  InitTypeByteUnit();
+  InitTypeNames();
 }
 
 // Initializes the Exif object by storing the specified file and
@@ -70,20 +71,6 @@ bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
   set_first_ifd_offset(first_ifd_offset);
 
   return true;
-}
-
-// Initializes the byte unit for field types used in Exif.
-void Exif::InitTypeByteUnit() {
-  QHash<Type, int> type_byte_unit;
-  type_byte_unit.insert(kByteType, 1);
-  type_byte_unit.insert(kAsciiType, 1);
-  type_byte_unit.insert(kShortType, 2);
-  type_byte_unit.insert(kLongType, 4);
-  type_byte_unit.insert(kRationalType, 8);
-  type_byte_unit.insert(kUndefinedType, 1);
-  type_byte_unit.insert(kSlongType, 4);
-  type_byte_unit.insert(kSrationalType, 8);
-  set_type_byte_unit(type_byte_unit);
 }
 
 // Initializes tag names used in Exif.
@@ -222,6 +209,34 @@ void Exif::InitTagNames() {
   set_tag_names(tag_names);
 }
 
+// Initializes the byte unit for field types used in Exif.
+void Exif::InitTypeByteUnit() {
+  QHash<Type, int> type_byte_unit;
+  type_byte_unit.insert(kByteType, 1);
+  type_byte_unit.insert(kAsciiType, 1);
+  type_byte_unit.insert(kShortType, 2);
+  type_byte_unit.insert(kLongType, 4);
+  type_byte_unit.insert(kRationalType, 8);
+  type_byte_unit.insert(kUndefinedType, 1);
+  type_byte_unit.insert(kSlongType, 4);
+  type_byte_unit.insert(kSrationalType, 8);
+  set_type_byte_unit(type_byte_unit);
+}
+
+// Initializes the type names used in Exif.
+void Exif::InitTypeNames() {
+  QHash<Type, QString> type_names;
+  type_names.insert(kByteType, "Byte");
+  type_names.insert(kAsciiType, "ASCII");
+  type_names.insert(kShortType, "SHORT");
+  type_names.insert(kLongType, "LONG");
+  type_names.insert(kRationalType, "RATIONAL");
+  type_names.insert(kUndefinedType, "UNDEFINED");
+  type_names.insert(kSlongType, "SLONG");
+  type_names.insert(kSrationalType, "SRATIONAL");
+  set_type_names(type_names);
+}
+
 // Reads a 12-byte IFD entry at the specified ifd_entry_offset. Returns false
 // only if the format is not correct.
 bool Exif::ReadIfdEntry(int ifd_entry_offset) {
@@ -238,6 +253,7 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
   Type type = static_cast<Type>(type_number);
   if (!type_byte_unit().contains(type))
     return false;
+  qDebug() << "Type:" << type_names().value(type);
 
   // Reads the number of values of the indicated Type.
   int count = ReadFromFile(4).toHex().toInt(NULL, 16);
@@ -246,36 +262,28 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
 
   switch (type) {
     case kByteType:
-      qDebug() << "Type: BYTE";
       qDebug() << value.toHex().toUShort(NULL, 16);
       break;
     case kAsciiType:
-      qDebug() << "Type: ASCII";
       qDebug() << QString(value);
       break;
     case kShortType:
-      qDebug() << "Type: SHORT";
       qDebug() << value.toHex().toUShort(NULL, 16);
       break;
     case kLongType:
-      qDebug() << "Type: LONG";
       qDebug() << value.toHex().toUInt(NULL, 16);
       break;
     case kRationalType:
-      qDebug() << "Type: RATIONAL";
       qDebug() << value.toHex();
       break;
     case kUndefinedType:
-      qDebug() << "Type: UNDEFINED";
       qDebug() << value.toHex();
       qDebug() << QString(value);
       break;
     case kSlongType:
-      qDebug() << "Type: SLONG";
       qDebug() << value.toHex().toInt(NULL, 16);
       break;
     case kSrationalType:
-      qDebug() << "Type: SRATIONAL";
       qDebug() << value.toHex();
       break;
   }

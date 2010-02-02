@@ -210,8 +210,9 @@ class Exif : public QObject {
     kSrationalType = 10,
   };
 
-  void InitTypeByteUnit();
   void InitTagNames();
+  void InitTypeByteUnit();
+  void InitTypeNames();
   QByteArray ReadFromFile(const int max_size);
   QByteArray ReadIfdEntryValue(const int ifd_entry_offset, const Type type,
                                const int count);
@@ -227,9 +228,11 @@ class Exif : public QObject {
   FileTypes file_type() const { return file_type_; }
   void set_file_type(FileTypes type) { file_type_ = type; }
   QHash<Tag, QString> tag_names() const { return tag_names_; }
-  void set_tag_names(QHash<Tag, QString> tag_names) { tag_names_ = tag_names; }
+  void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   int tiff_header_offset() const { return tiff_header_offset_; }
   void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
+  QHash<Type, QString> type_names() const { return type_names_; }
+  void set_type_names(QHash<Type, QString> names) { type_names_ = names; }
 
   // The byte order of the TIFF file.
   Endianness endianness_;
@@ -245,6 +248,8 @@ class Exif : public QObject {
   QHash<Tag, QString> tag_names_;
   // The offset of the TIFF header.
   int tiff_header_offset_;
+  // The type names to read for human.
+  QHash<Type, QString> type_names_;
 };
 
 }  // namespace qmeta
