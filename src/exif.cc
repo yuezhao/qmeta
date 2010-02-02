@@ -260,32 +260,50 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
   // Retrieves the value of the IFD entry.
   QByteArray value = ReadIfdEntryValue(ifd_entry_offset, type, count);
 
-  switch (type) {
-    case kByteType:
-      qDebug() << value.toHex().toUShort(NULL, 16);
-      break;
-    case kAsciiType:
-      qDebug() << QString(value);
-      break;
-    case kShortType:
-      qDebug() << value.toHex().toUShort(NULL, 16);
-      break;
-    case kLongType:
-      qDebug() << value.toHex().toUInt(NULL, 16);
-      break;
-    case kRationalType:
-      qDebug() << value.toHex();
-      break;
-    case kUndefinedType:
-      qDebug() << value.toHex();
-      qDebug() << QString(value);
-      break;
-    case kSlongType:
-      qDebug() << value.toHex().toInt(NULL, 16);
-      break;
-    case kSrationalType:
-      qDebug() << value.toHex();
-      break;
+  if (type == kAsciiType) {
+    qDebug() << QString(value);
+  } else if (type == kUndefinedType) {
+    qDebug() << value.toHex();
+  } else {
+    int byte_unit = type_byte_unit().value(type);
+    double numerator;
+    double denominator;
+    float s_numerator;
+    float s_denominator;
+    for (int i = 0; i < count; ++i) {
+      QByteArray item = value.mid(i * byte_unit, byte_unit);
+      switch (type) {
+        case kByteType:
+          qDebug() << item.toHex().toUShort(NULL, 16);
+          break;
+        case kShortType:
+          qDebug() << item.toHex().toUShort(NULL, 16);
+          break;
+        case kLongType:
+          qDebug() << item.toHex().toUInt(NULL, 16);
+          break;
+        case kRationalType:
+          numerator = static_cast<double>(
+              item.mid(0, 4).toHex().toUInt(NULL, 16));
+          denominator = static_cast<double>(
+              item.mid(4).toHex().toUInt(NULL, 16));
+          qDebug() << numerator / denominator;
+
+          break;
+        case kSlongType:
+          qDebug() << item.toHex().toInt(NULL, 16);
+          break;
+        case kSrationalType:
+          s_numerator = static_cast<float>(
+              item.mid(0, 4).toHex().toInt(NULL, 16));
+          s_denominator = static_cast<float>(
+              item.mid(4).toHex().toInt(NULL, 16));
+          qDebug() << s_numerator / s_denominator;
+          break;
+        default:
+          return false;
+      }
+    }
   }
 
   if (tag == kExifIfdPointer) {
