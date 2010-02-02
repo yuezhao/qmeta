@@ -285,24 +285,13 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
 
   if (tag_name == kExifIfdPointer) {
     qDebug() << "^^^^^^^^^^^^ Exif ^^^^^^^^^^^^^^";
-    ulong exif_ifd_offset;
-    exif_ifd_offset = value.toHex().toULong(NULL, 16);
-    if (file_type() == kJpegFileType) {
-      exif_ifd_offset = exif_ifd_offset + first_ifd_offset() - 8;
-      qDebug() << "FILE SIZE: " << file()->size();
-      qDebug() << "EXIF_IFD_OFFSET (HEX):" << value.toHex();
-      qDebug() << "EXIF_IFD_OFFSET (DEC):" << exif_ifd_offset;
-      file()->seek(exif_ifd_offset);
-      qDebug() << "DATA:" << ReadFromFile(10).toHex();
-    }
-    ReadIfds(exif_ifd_offset);
+    ReadIfds(value.toHex().toUInt(NULL, 16) + tiff_header_offset());
     qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
   } else if (tag_name == kGpsInfoIfdPointer) {
     qDebug() << "^^^^^^^^^^^^ GPS ^^^^^^^^^^^^^^^";
-    ReadIfds(value.toHex().toULong(NULL, 16) + tiff_header_offset());
+    ReadIfds(value.toHex().toUInt(NULL, 16) + tiff_header_offset());
     qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
   }
-
   qDebug() << "--------------------------------";
   return true;
 }
@@ -373,7 +362,7 @@ bool Exif::ReadIfds(int ifd_offset) {
     return true;
   } else {
     if (file_type() == kJpegFileType)
-      next_ifd_offset = next_ifd_offset + first_ifd_offset() - 8;
+      next_ifd_offset = next_ifd_offset + tiff_header_offset();
     qDebug() << "Next IFD offset: " << next_ifd_offset;
     qDebug() << "################################";
     return ReadIfds(next_ifd_offset);
