@@ -25,12 +25,12 @@
 #ifndef QMETA_EXIF_H_
 #define QMETA_EXIF_H_
 
+#include <QHash>
 #include <QObject>
 
 #include "identifiers.h"
 
 class QFile;
-template<class T, class U> class QHash;
 
 namespace qmeta {
 
@@ -216,9 +216,6 @@ class Exif : public QObject {
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endian) { endianness_ = endian; }
-  QHash<TagNames, QString>* tag_names() const { return tag_names_; }
-  void set_tag_names(QHash<TagNames, QString> *tag_names) {
-    tag_names_ = tag_names;
   }
   QFile* file() const { return file_; }
   void set_file(QFile *file) { file_ = file; }
@@ -226,19 +223,23 @@ class Exif : public QObject {
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
   FileTypes file_type() const { return file_type_; }
   void set_file_type(FileTypes type) { file_type_ = type; }
+  QHash<TagNames, QString> tag_names() const { return tag_names_; }
+  void set_tag_names(QHash<TagNames, QString> tag_names) {
+    tag_names_ = tag_names;
+  }
   int tiff_header_offset() const { return tiff_header_offset_; }
   void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
 
   // The byte order of the TIFF file.
   Endianness endianness_;
-  // The tag names to read for human.
-  QHash<TagNames, QString> *tag_names_;
   // Tracks the file containing this EXIF data.
   QFile *file_;
   // The offset of the first IFD.
   int first_ifd_offset_;
   // The type of the tracked file.
   FileTypes file_type_;
+  // The tag names to read for human.
+  QHash<TagNames, QString> tag_names_;
   // The offset of the TIFF header.
   int tiff_header_offset_;
 };
