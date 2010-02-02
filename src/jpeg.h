@@ -25,13 +25,13 @@
 #ifndef QMETA_JPEG_
 #define QMETA_JPEG_
 
-#include "file_type.h"
+#include "file.h"
 
 class QString;
 
 namespace qmeta {
 
-class Jpeg : public FileType {
+class Jpeg : public File {
  public:
   explicit Jpeg(QObject *parent = NULL);
   bool Open(const QString &file_path);

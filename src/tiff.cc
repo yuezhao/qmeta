@@ -26,16 +26,16 @@
 
 #include <QtCore>
 
-#include "qmeta/exif.h"
+#include "exif.h"
 
 namespace qmeta {
 
-Tiff::Tiff(QObject *parent) : FileType(parent) {}
+Tiff::Tiff(QObject *parent) : File(parent) {}
 
 // Opens a TIFF file with the specified file_path. Returns true if the specified
 // file_path is a valid TIFF file and initialization is completed.
 bool Tiff::Open(const QString &file_path) {
-  if (!FileType::Open(file_path))
+  if (!File::Open(file_path))
     return false;
 
   // Creates the Exif object.

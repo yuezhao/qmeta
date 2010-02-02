@@ -31,12 +31,12 @@
 
 namespace qmeta {
 
-Jpeg::Jpeg(QObject *parent) : FileType(parent) {}
+Jpeg::Jpeg(QObject *parent) : File(parent) {}
 
 // Opens a JPEG file with the specified file_path. Returns true if the specified
 // file_path is a valid JPEG file and initialization is completed.
 bool Jpeg::Open(const QString &file_path) {
-  if (!FileType::Open(file_path))
+  if (!File::Open(file_path))
     return false;
 
   // Checks the first 2 bytes if equals to the SOI marker.

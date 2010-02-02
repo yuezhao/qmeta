@@ -181,7 +181,7 @@ class Exif : public QObject {
   };
 
   explicit Exif(QObject *parent = NULL);
-  bool Init(QFile *file, const int tiff_header_offset, FileTypes type);
+  bool Init(QFile *file, const int tiff_header_offset, FileType type);
   bool ReadIfdEntry(int ifd_entry_offset);
   bool ReadIfds();
   bool ReadIfds(int ifd_offset);
@@ -225,8 +225,8 @@ class Exif : public QObject {
   void set_file(QFile *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
-  FileTypes file_type() const { return file_type_; }
-  void set_file_type(FileTypes type) { file_type_ = type; }
+  FileType file_type() const { return file_type_; }
+  void set_file_type(FileType type) { file_type_ = type; }
   QHash<Tag, QString> tag_names() const { return tag_names_; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   int tiff_header_offset() const { return tiff_header_offset_; }
@@ -243,7 +243,7 @@ class Exif : public QObject {
   // The offset of the first IFD.
   int first_ifd_offset_;
   // The type of the tracked file.
-  FileTypes file_type_;
+  FileType file_type_;
   // The tag names to read for human.
   QHash<Tag, QString> tag_names_;
   // The offset of the TIFF header.

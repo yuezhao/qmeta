@@ -20,40 +20,30 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the FileType class, which is the base class for all QMeta
-// supported file types.
+// This file implements the detail of the File class.
 
-#ifndef QMETA_FILE_TYPE_H_
-#define QMETA_FILE_TYPE_H_
+#include "file.h"
 
-#include <QObject>
-
-class QFile;
+#include <QtCore>
 
 namespace qmeta {
 
-class Exif;
+// Constructs the File object.
+File::File(QObject *parent) : QObject(parent) {
+  set_exif(NULL);
+  set_file(NULL);
+}
 
-class FileType : public QObject {
- public:
-  explicit FileType(QObject *parent = NULL);
-  bool Open(const QString &file_path);
-  Exif* exif() const { return exif_; }
-
- protected:
-  void set_exif(Exif *exif) { exif_ = exif; }
-  QFile* file() const { return file_; }
-
- private:
-  void set_file(QFile *file) { file_ = file; }
-
-  // The corresponded Exif object of the tracked file. This property is set
-  // if the tracked file supports the EXIF specification.
-  Exif *exif_;
-  // Tracks the current opened file.
-  QFile *file_;
-};
+// Opens a new file object to represent the file with the given file_path
+// and stores it as a data member. Returns true if successful.
+bool File::Open(const QString &file_path) {
+  QFile *file = new QFile(file_path, this);
+  if (!file->open(QIODevice::ReadOnly)) {
+    return false;
+  } else {
+    set_file(file);
+    return true;
+  }
+}
 
 }  // namespace qmeta
-
-#endif  // QMETA_FILE_TYPE_H_

@@ -25,13 +25,13 @@
 #ifndef QMETA_TIFF_H_
 #define QMETA_TIFF_H_
 
-#include "file_type.h"
+#include "file.h"
 
 class QString;
 
 namespace qmeta {
 
-class Tiff : public FileType {
+class Tiff : public File {
  public:
   explicit Tiff(QObject *parent = NULL);
   bool Open(const QString &file_path);

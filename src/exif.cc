@@ -39,7 +39,7 @@ Exif::Exif(QObject *parent) : QObject(parent) {
 // Initializes the Exif object by storing the specified file and
 // tiff_header_offset. It also determines the byte order and the offset of
 // the first IFD. Returns true if the TIFF header is valid.
-bool Exif::Init(QFile *file, const int tiff_header_offset, FileTypes type) {
+bool Exif::Init(QFile *file, const int tiff_header_offset, FileType type) {
   set_tiff_header_offset(tiff_header_offset);
   set_file(file);
   set_file_type(type);

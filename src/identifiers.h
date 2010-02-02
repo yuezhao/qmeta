@@ -29,10 +29,10 @@ namespace qmeta {
 
 enum Endianness {
   kLittleEndians = 0,
-  kBigEndians
+  kBigEndians,
 };
 
-enum FileTypes {
+enum FileType {
   kJpegFileType = 0,
   kTiffFileType,
 };
