@@ -179,14 +179,6 @@ class Exif : public QObject {
     kGPSDateStamp = 29,  // GPS date
     kGPSDifferential = 30,  // GPS differential correction
   };
-
-  explicit Exif(QObject *parent = NULL);
-  bool Init(QFile *file, const int tiff_header_offset, FileType type);
-  bool ReadIfdEntry(int ifd_entry_offset);
-  bool ReadIfds();
-  bool ReadIfds(int ifd_offset);
-
- private:
   // Field types are used in Exif.
   enum Type {
     // An 8-bit unsigned integer.
@@ -210,12 +202,17 @@ class Exif : public QObject {
     kSrationalType = 10,
   };
 
+  explicit Exif(QObject *parent = NULL);
+  bool Init(QFile *file, const int tiff_header_offset, FileType type);
+
+ private:
   void InitTagNames();
   void InitTypeByteUnit();
   void InitTypeNames();
   QByteArray ReadFromFile(const int max_size);
-  QByteArray ReadIfdEntryValue(const int ifd_entry_offset, const Type type,
-                               const int count);
+  bool ReadIfds(int ifd_offset);
+  Tag IfdEntryTag(const int ifd_entry_offset);
+  QByteArray IfdEntryValue(const int ifd_entry_offset);
 
   Endianness endianness() const { return endianness_; }
   void set_endianness(Endianness endian) { endianness_ = endian; }
@@ -229,6 +226,8 @@ class Exif : public QObject {
   void set_file_type(FileType type) { file_type_ = type; }
   QHash<Tag, QString> tag_names() const { return tag_names_; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
+  QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
+  void set_tag_offsets(QHash<Tag, int> offset) { tag_offsets_ = offset; }
   int tiff_header_offset() const { return tiff_header_offset_; }
   void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
   QHash<Type, QString> type_names() const { return type_names_; }
@@ -246,6 +245,8 @@ class Exif : public QObject {
   FileType file_type_;
   // The tag names to read for human.
   QHash<Tag, QString> tag_names_;
+  // Records offsets of tags used in Exif.
+  QHash<Tag, int> tag_offsets_;
   // The offset of the TIFF header.
   int tiff_header_offset_;
   // The type names to read for human.
