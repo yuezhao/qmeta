@@ -50,7 +50,7 @@ bool Jpeg::Open(const QString &file_path) {
   // Checks the APP1 marker.
   if (file()->read(2).toHex() == "ffe1") {
     // Retrieves the APP1 length. The length doesn't include the APP1 marker.
-    int app1_length = qitty_utils::ToInt(file()->read(2));
+    int app1_length = file()->read(2).toHex().toInt(NULL, 16);
     if (app1_length != -1) {
       // Checks the Exif Identifier Code.
       if (file()->read(6).toHex() == "457869660000") {
