@@ -38,7 +38,7 @@ class Exif : public QObject {
   Q_OBJECT
 
  public:
-  enum TagNames {
+  enum Tag {
     // Exif-specific IFD.
     kExifIfdPointer = 34665,
     kGpsInfoIfdPointer = 34853,
@@ -231,8 +231,8 @@ class Exif : public QObject {
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
   FileTypes file_type() const { return file_type_; }
   void set_file_type(FileTypes type) { file_type_ = type; }
-  QHash<TagNames, QString> tag_names() const { return tag_names_; }
-  void set_tag_names(QHash<TagNames, QString> tag_names) {
+  QHash<Tag, QString> tag_names() const { return tag_names_; }
+  void set_tag_names(QHash<Tag, QString> tag_names) {
     tag_names_ = tag_names;
   }
   int tiff_header_offset() const { return tiff_header_offset_; }
@@ -249,7 +249,7 @@ class Exif : public QObject {
   // The type of the tracked file.
   FileTypes file_type_;
   // The tag names to read for human.
-  QHash<TagNames, QString> tag_names_;
+  QHash<Tag, QString> tag_names_;
   // The offset of the TIFF header.
   int tiff_header_offset_;
 };

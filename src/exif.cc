@@ -88,7 +88,7 @@ void Exif::InitFieldTypeUnit() {
 
 // Initializes tag names used in Exif.
 void Exif::InitTagNames() {
-  QHash<TagNames, QString> tag_names;
+  QHash<Tag, QString> tag_names;
   // Exif-specific IFD.
   tag_names.insert(kExifIfdPointer, tr("Exif IFD Pointer"));
   tag_names.insert(kGpsInfoIfdPointer, tr("GPS Info IFD Pointer"));
@@ -227,10 +227,9 @@ void Exif::InitTagNames() {
 bool Exif::ReadIfdEntry(int ifd_entry_offset) {
   file()->seek(ifd_entry_offset);
   // Reads the tag that identifies the field.
-  QByteArray tag = ReadFromFile(2);
-  TagNames tag_name = static_cast<TagNames>(tag.toHex().toInt(NULL, 16));
-  if (tag_names().contains(tag_name))
-    qDebug() << "Tag:" << tag_names().value(tag_name);
+  Tag tag = static_cast<Tag>(ReadFromFile(2).toHex().toInt(NULL, 16));
+  if (tag_names().contains(tag))
+    qDebug() << "Tag:" << tag_names().value(tag);
   else
     return true;
 
@@ -283,11 +282,11 @@ bool Exif::ReadIfdEntry(int ifd_entry_offset) {
       break;
   }
 
-  if (tag_name == kExifIfdPointer) {
+  if (tag == kExifIfdPointer) {
     qDebug() << "^^^^^^^^^^^^ Exif ^^^^^^^^^^^^^^";
     ReadIfds(value.toHex().toUInt(NULL, 16) + tiff_header_offset());
     qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
-  } else if (tag_name == kGpsInfoIfdPointer) {
+  } else if (tag == kGpsInfoIfdPointer) {
     qDebug() << "^^^^^^^^^^^^ GPS ^^^^^^^^^^^^^^^";
     ReadIfds(value.toHex().toUInt(NULL, 16) + tiff_header_offset());
     qDebug() << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
