@@ -36,7 +36,7 @@ Makefile.
 
     qmake qmeta.pro
 
-Once you have the Makefile, you can build it as usually.
+Once you have the Makefile, you can build it as usual.
 
     make
 
