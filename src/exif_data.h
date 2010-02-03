@@ -30,19 +30,10 @@
 
 namespace qmeta {
 
-class ExifData : public QObject {
-  Q_OBJECT
-
+class ExifData : public QByteArray {
  public:
-  explicit ExifData(QByteArray byte_array, QObject *parent = NULL);
-  QByteArray ToHex();
-  virtual QString ToString();
-
- private:
-  QByteArray byte_array() const { return byte_array_; }
-  void set_byte_array(QByteArray byte_array) { byte_array_ = byte_array; }
-
-  QByteArray byte_array_;
+  ExifData(const QByteArray &other);
+  QString ToString();
 };
 
 }  // namespace qmeta

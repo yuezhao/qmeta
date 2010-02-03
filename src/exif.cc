@@ -326,10 +326,12 @@ QByteArray Exif::ReadFromFile(const int max_size) {
 }
 
 ExifData* Exif::Value(Tag tag) {
+// Returns the value of the specified tag as a ExifData.
+ExifData Exif::Value(Tag tag) {
   QByteArray value;
   if (tag_offsets().contains(tag))
     value = IfdEntryValue(tag_offsets().value(tag));
-  ExifData *exif_data = new ExifData(value, this);
+  ExifData exif_data(value);
   return exif_data;
 }
 

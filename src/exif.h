@@ -205,7 +205,7 @@ class Exif : public QObject {
 
   explicit Exif(QObject *parent = NULL);
   bool Init(QFile *file, const int tiff_header_offset, FileType type);
-  ExifData* Value(Tag tag);
+  ExifData Value(Tag tag);
 
  private:
   void InitTagNames();

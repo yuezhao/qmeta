@@ -28,16 +28,10 @@
 
 namespace qmeta {
 
-ExifData::ExifData(QByteArray byte_array, QObject *parent) : QObject(parent) {
-  set_byte_array(byte_array);
-}
-
-QByteArray ExifData::ToHex() {
-  return byte_array().toHex();
-}
+ExifData::ExifData(const QByteArray &other) : QByteArray(other) {}
 
 QString ExifData::ToString() {
-  return QString(byte_array());
+  return QString(data());
 }
 
 }  // namespace qmeta
