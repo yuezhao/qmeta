@@ -30,8 +30,19 @@ namespace qmeta {
 
 ExifData::ExifData(const QByteArray &other) : QByteArray(other) {}
 
+// Returns the byte array converted to int in decimal.
+int ExifData::ToInt() {
+  return toHex().toInt(NULL, 16);
+}
+
+// Returns the byte array converted to QString.
 QString ExifData::ToString() {
   return QString(data());
+}
+
+// Returns the byte array converted to uint in decimal.
+uint ExifData::ToUInt() {
+  return toHex().toUInt(NULL, 16);
 }
 
 }  // namespace qmeta

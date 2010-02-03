@@ -39,6 +39,7 @@ class File : public QObject {
   explicit File(QObject *parent = NULL);
   bool Open(const QString &file_path);
   Exif* exif() const { return exif_; }
+  QByteArray Thumbnail();
 
  protected:
   void set_exif(Exif *exif) { exif_ = exif; }

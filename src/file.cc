@@ -26,6 +26,8 @@
 
 #include <QtCore>
 
+#include "exif.h"
+
 namespace qmeta {
 
 // Constructs the File object.
@@ -44,6 +46,15 @@ bool File::Open(const QString &file_path) {
     set_file(file);
     return true;
   }
+}
+
+// Returns the thumbnail from supported metadata. Currently Exif is the only
+// supported metadata.
+QByteArray File::Thumbnail() {
+  QByteArray thumbnail;
+  if (exif())
+    thumbnail = exif()->Thumbnail();
+  return thumbnail;
 }
 
 }  // namespace qmeta

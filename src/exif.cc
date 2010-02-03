@@ -325,6 +325,19 @@ QByteArray Exif::ReadFromFile(const int max_size) {
   return data;
 }
 
+// Returns the byte data of the thumbnail saved in Exif.
+QByteArray Exif::Thumbnail() {
+  QByteArray thumbnail;
+  quint32 thumbnail_offset = Value(kJPEGInterchangeFormat).ToUInt();
+  quint32 length = Value(kJPEGInterchangeFormatLength).ToUInt();
+  if (thumbnail_offset && length) {
+    thumbnail_offset += tiff_header_offset();
+    file()->seek(thumbnail_offset);
+    thumbnail = file()->read(length);
+  }
+  return thumbnail;
+}
+
 // Returns the value of the specified tag as a ExifData.
 ExifData Exif::Value(Tag tag) {
   QByteArray value;
