@@ -28,6 +28,7 @@
 #include <QHash>
 #include <QObject>
 
+#include "exif_data.h"
 #include "identifiers.h"
 
 class QFile;
@@ -204,7 +205,7 @@ class Exif : public QObject {
 
   explicit Exif(QObject *parent = NULL);
   bool Init(QFile *file, const int tiff_header_offset, FileType type);
-  QByteArray Value(Tag tag);
+  ExifData* Value(Tag tag);
 
  private:
   void InitTagNames();

@@ -325,11 +325,12 @@ QByteArray Exif::ReadFromFile(const int max_size) {
   return data;
 }
 
-QByteArray Exif::Value(Tag tag) {
+ExifData* Exif::Value(Tag tag) {
+  QByteArray value;
   if (tag_offsets().contains(tag))
-    return IfdEntryValue(tag_offsets().value(tag));
-  else
-    return QByteArray("");
+    value = IfdEntryValue(tag_offsets().value(tag));
+  ExifData *exif_data = new ExifData(value, this);
+  return exif_data;
 }
 
 }  // namespace qmeta

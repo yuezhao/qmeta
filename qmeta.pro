@@ -39,11 +39,13 @@ UI_DIR = build/ui
 # Source code files for the QMeta.
 INCLUDEPATH = src
 HEADERS += src/exif.h \
+           src/exif_data.h \
            src/file.h \
            src/identifiers.h \
            src/tiff.h \
            src/jpeg.h
 SOURCES += src/exif.cc \
+           src/exif_data.cc \
            src/file.cc \
            src/tiff.cc \
            src/jpeg.cc
