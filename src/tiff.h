@@ -35,6 +35,9 @@ class Tiff : public File {
  public:
   explicit Tiff(QObject *parent = NULL);
   bool Open(const QString &file_path);
+
+ private:
+  bool IsValid();
 };
 
 }  // namespace qmeta

@@ -25,6 +25,7 @@
 #include "tiff.h"
 
 #include <QtCore>
+#include <qitty/byte_array.h>
 
 #include "exif.h"
 
@@ -42,6 +43,29 @@ bool Tiff::Open(const QString &file_path) {
   Exif *exif = new Exif(this);
   if (exif->Init(file(), 0, kTiffFileType))
     set_exif(exif);
+
+  return true;
+}
+
+// Reimplements the File::IsValid().
+bool Tiff::IsValid() {
+  file()->seek(0);
+  // Determines the byte order in the specified file.
+  QByteArray byte_order = file()->read(2);
+  QByteArray fourty_two = file()->read(2);
+  if (byte_order == "II")
+    // The byte order is little-endian. Exchanges the bytes in fourty_two.
+    fourty_two = qitty_utils::ReverseByteArray(fourty_two);
+  else if (byte_order == "MM")
+    // The byte order is big-endian. No need to change the bytes in fourty_two.
+    fourty_two = fourty_two;
+  else
+    return false;
+
+  // Further identifies whether the specified file has a valid TIFF header.
+  // The fourty_two should have the value of 42 in decimal.
+  if (fourty_two.toHex().toInt(NULL, 16) != 42)
+    return false;
 
   return true;
 }

@@ -46,6 +46,10 @@ class File : public QObject {
   QFile* file() const { return file_; }
 
  private:
+  // Returns true if the tracked file is valid. This function should be
+  // reimplemented in all subclasses to verify specific file types.
+  virtual bool IsValid() { return false; }
+
   void set_file(QFile *file) { file_ = file; }
 
   // The corresponded Exif object of the tracked file. This property is set

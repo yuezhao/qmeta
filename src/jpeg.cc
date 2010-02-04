@@ -39,12 +39,7 @@ bool Jpeg::Open(const QString &file_path) {
   if (!File::Open(file_path))
     return false;
 
-  // Checks the first 2 bytes if equals to the SOI marker.
-  file()->seek(0);
-  if (file()->read(2).toHex() != "ffd8")
-    return false;
-
-  // Creates the Exif object if there's embeded EXIF data in the file.
+  // Creates the Exif object if there is embeded EXIF data in the file.
   // Jumps to the beginning of the APP1 marker.
   file()->seek(2);
   // Checks the APP1 marker.
@@ -61,6 +56,16 @@ bool Jpeg::Open(const QString &file_path) {
       }
     }
   }
+  return true;
+}
+
+// Reimplements the File::IsValid().
+bool Jpeg::IsValid() {
+  // Checks the first 2 bytes if equals to the SOI marker.
+  file()->seek(0);
+  if (file()->read(2).toHex() != "ffd8")
+    return false;
+
   return true;
 }
 

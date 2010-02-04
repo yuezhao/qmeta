@@ -44,7 +44,7 @@ bool File::Open(const QString &file_path) {
     return false;
   } else {
     set_file(file);
-    return true;
+    return IsValid();
   }
 }
 
