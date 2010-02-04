@@ -21,8 +21,8 @@
 // QMeta - a library to manipulate image metadata based on Qt.
 //
 // This file defines the Image class, which has the ability to guess the file
-// type of the specified image data, and can be used as a normal file type
-// class such as Jpeg, Tiff, etc.
+// type of the specified image data, and can be used as a normal file class
+// such as Jpeg, Tiff, etc.
 
 #ifndef QMETA_IMAGE_H_
 #define QMETA_IMAGE_H_
@@ -50,7 +50,6 @@ public:
   template<class T> bool GuessType(FileType file_type);
 
   void set_file_type(FileType file_type) { file_type_ = file_type; }
- //  void InitExif();
   FileType file_type_;
 };
 
