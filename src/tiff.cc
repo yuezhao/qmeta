@@ -33,22 +33,19 @@ namespace qmeta {
 
 Tiff::Tiff(QObject *parent) : File(parent) {}
 
-// Opens a TIFF file with the specified file_path. Returns true if the specified
-// file_path is a valid TIFF file and initialization is completed.
-bool Tiff::Open(const QString &file_path) {
-  if (!File::Open(file_path))
-    return false;
+Tiff::Tiff(const QString &file_name) : File(file_name) {
+  InitMetadata();
+}
 
-  // Creates the Exif object.
-  Exif *exif = new Exif(this);
-  if (exif->Init(file(), 0, kTiffFileType))
-    set_exif(exif);
-
-  return true;
+Tiff::Tiff(QByteArray *data) : File(data) {
+  InitMetadata();
 }
 
 // Reimplements the File::IsValid().
 bool Tiff::IsValid() {
+  if (!file())
+    return false;
+
   file()->seek(0);
   // Determines the byte order in the specified file.
   QByteArray byte_order = file()->read(2);
@@ -68,6 +65,16 @@ bool Tiff::IsValid() {
     return false;
 
   return true;
+}
+
+// Reimplements the File::InitExif().
+void Tiff::InitExif() {
+  if (IsValid()) {
+    // Creates the Exif object.
+    Exif *exif = new Exif(this);
+    if (exif->Init(file(), 0, kTiffFileType))
+      set_exif(exif);
+  }
 }
 
 }  // namespace qmeta

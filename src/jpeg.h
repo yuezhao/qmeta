@@ -34,10 +34,12 @@ namespace qmeta {
 class Jpeg : public File {
  public:
   explicit Jpeg(QObject *parent = NULL);
-  bool Open(const QString &file_path);
+  explicit Jpeg(QByteArray *data);
+  explicit Jpeg(const QString &file_name);
+  bool IsValid();
 
  private:
-  bool IsValid();
+  void InitExif();
 };
 
 }  // namespace qmeta

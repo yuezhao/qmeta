@@ -30,22 +30,30 @@
 
 namespace qmeta {
 
-// Constructs the File object.
+// Constructs a null file.
 File::File(QObject *parent) : QObject(parent) {
   set_exif(NULL);
   set_file(NULL);
 }
 
-// Opens a new file object to represent the file with the given file_path
-// and stores it as a data member. Returns true if successful.
-bool File::Open(const QString &file_path) {
-  QFile *file = new QFile(file_path, this);
-  if (!file->open(QIODevice::ReadOnly)) {
-    return false;
-  } else {
+// Constructs a file from the given QByteArray data.
+File::File(QByteArray *data) {
+  set_exif(NULL);
+  QBuffer *file = new QBuffer(data, this);
+  if (file->open(QIODevice::ReadOnly))
     set_file(file);
-    return IsValid();
-  }
+  else
+    set_file(NULL);
+}
+
+// Constructs a file and tries to load the file with the given file_name.
+File::File(const QString &file_name) {
+  set_exif(NULL);
+  QFile *file = new QFile(file_name, this);
+  if (file->open(QIODevice::ReadOnly))
+    set_file(file);
+  else
+    set_file(NULL);
 }
 
 // Returns the thumbnail from supported metadata. Currently Exif is the only
@@ -55,6 +63,11 @@ QByteArray File::Thumbnail() {
   if (exif())
     thumbnail = exif()->Thumbnail();
   return thumbnail;
+}
+
+// Initializes metadata objects for the tracked file.
+void File::InitMetadata() {
+  InitExif();
 }
 
 }  // namespace qmeta

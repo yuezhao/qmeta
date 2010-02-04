@@ -34,10 +34,12 @@ namespace qmeta {
 class Tiff : public File {
  public:
   explicit Tiff(QObject *parent = NULL);
-  bool Open(const QString &file_path);
+  explicit Tiff(QByteArray *data);
+  explicit Tiff(const QString &file_name);
+  bool IsValid();
 
  private:
-  bool IsValid();
+  void InitExif();
 };
 
 }  // namespace qmeta

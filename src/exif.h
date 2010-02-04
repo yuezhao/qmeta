@@ -31,7 +31,7 @@
 #include "exif_data.h"
 #include "identifiers.h"
 
-class QFile;
+class QIODevice;
 
 namespace qmeta {
 
@@ -204,7 +204,7 @@ class Exif : public QObject {
   };
 
   explicit Exif(QObject *parent = NULL);
-  bool Init(QFile *file, const int tiff_header_offset, FileType type);
+  bool Init(QIODevice *file, const int tiff_header_offset, FileType type);
   QByteArray Thumbnail();
   ExifData Value(Tag tag);
 
@@ -223,8 +223,8 @@ class Exif : public QObject {
   void set_endianness(Endianness endian) { endianness_ = endian; }
   QHash<Type, int> type_byte_unit() const { return type_byte_unit_; }
   void set_type_byte_unit(QHash<Type, int> unit) { type_byte_unit_ = unit; }
-  QFile* file() const { return file_; }
-  void set_file(QFile *file) { file_ = file; }
+  QIODevice* file() const { return file_; }
+  void set_file(QIODevice *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
   FileType file_type() const { return file_type_; }
@@ -242,7 +242,7 @@ class Exif : public QObject {
   // The byte unit for filed types used in Exif.
   QHash<Type, int> type_byte_unit_;
   // Tracks the file containing this EXIF data.
-  QFile *file_;
+  QIODevice *file_;
   // The offset of the first IFD.
   int first_ifd_offset_;
   // The type of the tracked file.

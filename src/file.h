@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-class QFile;
+class QIODevice;
 
 namespace qmeta {
 
@@ -37,26 +37,30 @@ class Exif;
 class File : public QObject {
  public:
   explicit File(QObject *parent = NULL);
-  bool Open(const QString &file_path);
+  explicit File(QByteArray *data);
+  explicit File(const QString &file_name);
   Exif* exif() const { return exif_; }
   QByteArray Thumbnail();
 
  protected:
   void set_exif(Exif *exif) { exif_ = exif; }
-  QFile* file() const { return file_; }
+  QIODevice* file() const { return file_; }
+  // Initializes the Exif object.
+  virtual void InitExif() {};
+  void InitMetadata();
 
  private:
   // Returns true if the tracked file is valid. This function should be
   // reimplemented in all subclasses to verify specific file types.
-  virtual bool IsValid() { return false; }
+  virtual bool IsValid() = 0;
 
-  void set_file(QFile *file) { file_ = file; }
+  void set_file(QIODevice *file) { file_ = file; }
 
   // The corresponded Exif object of the tracked file. This property is set
   // if the tracked file supports the EXIF specification.
   Exif *exif_;
   // Tracks the current opened file.
-  QFile *file_;
+  QIODevice *file_;
 };
 
 }  // namespace qmeta

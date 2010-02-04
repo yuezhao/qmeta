@@ -33,40 +33,49 @@ namespace qmeta {
 
 Jpeg::Jpeg(QObject *parent) : File(parent) {}
 
-// Opens a JPEG file with the specified file_path. Returns true if the specified
-// file_path is a valid JPEG file and initialization is completed.
-bool Jpeg::Open(const QString &file_path) {
-  if (!File::Open(file_path))
-    return false;
+Jpeg::Jpeg(QByteArray *data) : File(data) {
+  InitMetadata();
+}
 
-  // Creates the Exif object if there is embeded EXIF data in the file.
-  // Jumps to the beginning of the APP1 marker.
-  file()->seek(2);
-  // Checks the APP1 marker.
-  if (file()->read(2).toHex() == "ffe1") {
-    // Retrieves the APP1 length. The length doesn't include the APP1 marker.
-    int app1_length = file()->read(2).toHex().toInt(NULL, 16);
-    if (app1_length != -1) {
-      // Checks the Exif Identifier Code.
-      if (file()->read(6).toHex() == "457869660000") {
-        // Creates the Exif object.
-        Exif *exif = new Exif(this);
-        if (exif->Init(file(), file()->pos(), kJpegFileType))
-          set_exif(exif);
-      }
-    }
-  }
-  return true;
+Jpeg::Jpeg(const QString &file_name) : File(file_name) {
+  InitMetadata();
 }
 
 // Reimplements the File::IsValid().
 bool Jpeg::IsValid() {
+  if (!file())
+    return false;
+
   // Checks the first 2 bytes if equals to the SOI marker.
   file()->seek(0);
   if (file()->read(2).toHex() != "ffd8")
     return false;
 
   return true;
+}
+
+// Reimplements the File::InitExif().
+void Jpeg::InitExif() {
+  if (!IsValid())
+    return;
+
+  // Jumps to the beginning of the APP1 marker.
+  file()->seek(2);
+  // Checks the APP1 marker.
+  if (file()->read(2).toHex() != "ffe1")
+    return;
+
+  // Retrieves the APP1 length. The length doesn't include the APP1 marker.
+  file()->read(2).toHex().toInt(NULL, 16);
+
+  // Checks the Exif Identifier Code.
+  if (file()->read(6).toHex() != "457869660000")
+    return;
+
+  // Creates the Exif object.
+  Exif *exif = new Exif(this);
+  if (exif->Init(file(), file()->pos(), kJpegFileType))
+    set_exif(exif);
 }
 
 }  // namespace qmeta
