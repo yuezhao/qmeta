@@ -37,8 +37,9 @@ class Exif;
 class File : public QObject {
  public:
   explicit File(QObject *parent = NULL);
-  explicit File(QByteArray *data);
-  explicit File(const QString &file_name);
+  explicit File(QByteArray *data, QObject *parent = NULL);
+  explicit File(QIODevice *file, QObject *parent = NULL);
+  explicit File(const QString &file_name, QObject *parent = NULL);
   Exif* exif() const { return exif_; }
   QByteArray Thumbnail();
 
@@ -52,7 +53,7 @@ class File : public QObject {
  private:
   // Returns true if the tracked file is valid. This function should be
   // reimplemented in all subclasses to verify specific file types.
-  virtual bool IsValid() = 0;
+  virtual bool IsValid() { return false; }
 
   void set_file(QIODevice *file) { file_ = file; }
 

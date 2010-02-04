@@ -33,11 +33,16 @@ namespace qmeta {
 
 Jpeg::Jpeg(QObject *parent) : File(parent) {}
 
-Jpeg::Jpeg(QByteArray *data) : File(data) {
+Jpeg::Jpeg(QByteArray *data, QObject *parent) : File(data, parent) {
   InitMetadata();
 }
 
-Jpeg::Jpeg(const QString &file_name) : File(file_name) {
+Jpeg::Jpeg(QIODevice *file, QObject *parent) : File(file, parent) {
+  InitMetadata();
+}
+
+Jpeg::Jpeg(const QString &file_name, QObject *parent) : File(file_name,
+                                                             parent) {
   InitMetadata();
 }
 

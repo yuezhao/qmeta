@@ -33,11 +33,16 @@ namespace qmeta {
 
 Tiff::Tiff(QObject *parent) : File(parent) {}
 
-Tiff::Tiff(const QString &file_name) : File(file_name) {
+Tiff::Tiff(QByteArray *data, QObject *parent) : File(data, parent) {
   InitMetadata();
 }
 
-Tiff::Tiff(QByteArray *data) : File(data) {
+Tiff::Tiff(QIODevice *file, QObject *parent) : File(file, parent) {
+  InitMetadata();
+}
+
+Tiff::Tiff(const QString &file_name, QObject *parent) : File(file_name,
+                                                             parent) {
   InitMetadata();
 }
 

@@ -37,7 +37,7 @@ File::File(QObject *parent) : QObject(parent) {
 }
 
 // Constructs a file from the given QByteArray data.
-File::File(QByteArray *data) {
+File::File(QByteArray *data, QObject *parent) : QObject(parent) {
   set_exif(NULL);
   QBuffer *file = new QBuffer(data, this);
   if (file->open(QIODevice::ReadOnly))
@@ -46,8 +46,14 @@ File::File(QByteArray *data) {
     set_file(NULL);
 }
 
+// Constructs a file from the given QIODevice file.
+File::File(QIODevice *file, QObject *parent) : QObject(parent) {
+  set_exif(NULL);
+  set_file(file);
+}
+
 // Constructs a file and tries to load the file with the given file_name.
-File::File(const QString &file_name) {
+File::File(const QString &file_name, QObject *parent) : QObject(parent) {
   set_exif(NULL);
   QFile *file = new QFile(file_name, this);
   if (file->open(QIODevice::ReadOnly))

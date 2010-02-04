@@ -33,7 +33,8 @@ enum Endianness {
 };
 
 enum FileType {
-  kJpegFileType = 0,
+  kInvalidFileType = 0,
+  kJpegFileType,
   kTiffFileType,
 };
 
