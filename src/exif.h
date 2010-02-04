@@ -208,6 +208,8 @@ class Exif : public QObject {
   QByteArray Thumbnail();
   ExifData Value(Tag tag);
 
+  QHash<Tag, QString> tag_names() const { return tag_names_; }
+
  private:
   void InitTagNames();
   void InitTypeByteUnit();
@@ -227,7 +229,6 @@ class Exif : public QObject {
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
   FileType file_type() const { return file_type_; }
   void set_file_type(FileType type) { file_type_ = type; }
-  QHash<Tag, QString> tag_names() const { return tag_names_; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
   void set_tag_offsets(QHash<Tag, int> offset) { tag_offsets_ = offset; }
