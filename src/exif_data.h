@@ -33,6 +33,8 @@ namespace qmeta {
 class ExifData : public QByteArray {
  public:
   ExifData(const QByteArray &other);
+  double ToDouble();
+  float ToFloat();
   int ToInt();
   QString ToString();
   uint ToUInt();
