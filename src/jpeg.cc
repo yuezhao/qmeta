@@ -64,17 +64,23 @@ void Jpeg::InitExif() {
   if (!IsValid())
     return;
 
-  // Jumps to the beginning of the APP1 marker.
   file()->seek(2);
-  // Checks the APP1 marker.
-  if (file()->read(2).toHex() != "ffe1")
-    return;
+  while (!file()->atEnd()) {
+    // Find APP1 marker.
+    if (file()->read(1).toHex() != "ff")
+      continue;
+    if (file()->read(1).toHex() != "e1")
+      continue;
 
-  // Retrieves the APP1 length. The length doesn't include the APP1 marker.
-  file()->read(2).toHex().toInt(NULL, 16);
+    // Retrieves the APP1 length. The length doesn't include the APP1 marker.
+    file()->read(2).toHex().toInt(NULL, 16);
 
-  // Checks the Exif Identifier Code.
-  if (file()->read(6).toHex() != "457869660000")
+    // Checks the Exif Identifier Code.
+    if (file()->read(6).toHex() == "457869660000")
+      break;
+  }
+
+  if (file()->atEnd())
     return;
 
   // Creates the Exif object.
