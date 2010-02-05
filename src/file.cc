@@ -73,6 +73,9 @@ QByteArray File::Thumbnail() {
 
 // Initializes metadata objects for the tracked file.
 void File::InitMetadata() {
+  if (!IsValid())
+    return;
+
   InitExif();
 }
 

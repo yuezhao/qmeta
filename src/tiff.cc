@@ -74,12 +74,10 @@ bool Tiff::IsValid() {
 
 // Reimplements the File::InitExif().
 void Tiff::InitExif() {
-  if (IsValid()) {
-    // Creates the Exif object.
-    Exif *exif = new Exif(this);
-    if (exif->Init(file(), 0, kTiffFileType))
-      set_exif(exif);
-  }
+  // Creates the Exif object.
+  Exif *exif = new Exif(this);
+  if (exif->Init(file(), 0, kTiffFileType))
+    set_exif(exif);
 }
 
 }  // namespace qmeta

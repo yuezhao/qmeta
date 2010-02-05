@@ -61,9 +61,6 @@ bool Jpeg::IsValid() {
 
 // Reimplements the File::InitExif().
 void Jpeg::InitExif() {
-  if (!IsValid())
-    return;
-
   file()->seek(2);
   while (!file()->atEnd()) {
     // Find APP1 marker.
