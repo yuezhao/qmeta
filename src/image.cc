@@ -28,18 +28,15 @@
 
 namespace qmeta {
 
-Image::Image(QObject *parent) : File(parent) {}
-
-Image::Image(QByteArray *data, QObject *parent) : File(data, parent) {
+Image::Image(QByteArray *data) : File(data) {
   GuessType();
 }
 
-Image::Image(QIODevice *file, QObject *parent) : File(file, parent) {
+Image::Image(QIODevice *file) : File(file) {
   GuessType();
 }
 
-Image::Image(const QString &file_name, QObject *parent) : File(file_name,
-                                                               parent) {
+Image::Image(const QString &file_name) : File(file_name) {
   GuessType();
 }
 
@@ -63,8 +60,9 @@ void Image::GuessType() {
 // file_type to current file type and binds the image's metadata objects.
 // Returns true if the specified type T is correct.
 template<class T> bool Image::GuessType(FileType file_type) {
-  T *image = new T(file(), this);
+  T *image = new T(file());
   if (image->IsValid()) {
+    image->setParent(this);
     set_file_type(file_type);
     set_exif(image->exif());
     return true;

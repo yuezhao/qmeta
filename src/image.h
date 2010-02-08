@@ -37,10 +37,9 @@ namespace qmeta {
 
 class Image : public File {
 public:
-  explicit Image(QObject *parent = NULL);
-  explicit Image(QByteArray *data, QObject *parent = NULL);
-  explicit Image(QIODevice *file, QObject *parent = NULL);
-  explicit Image(const QString &file_name, QObject *parent = NULL);
+  explicit Image(QByteArray *data);
+  explicit Image(QIODevice *file);
+  explicit Image(const QString &file_name);
   bool IsValid();
 
   FileType file_type() const { return file_type_; }

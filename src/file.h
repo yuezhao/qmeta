@@ -36,10 +36,9 @@ class Exif;
 
 class File : public QObject {
  public:
-  explicit File(QObject *parent = NULL);
-  explicit File(QByteArray *data, QObject *parent = NULL);
-  explicit File(QIODevice *file, QObject *parent = NULL);
-  explicit File(const QString &file_name, QObject *parent = NULL);
+  explicit File(QByteArray *data);
+  explicit File(QIODevice *file);
+  explicit File(const QString &file_name);
   Exif* exif() const { return exif_; }
   QByteArray Thumbnail();
 

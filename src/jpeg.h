@@ -33,10 +33,9 @@ namespace qmeta {
 
 class Jpeg : public File {
  public:
-  explicit Jpeg(QObject *parent = NULL);
-  explicit Jpeg(QByteArray *data, QObject *parent = NULL);
-  explicit Jpeg(QIODevice *file, QObject *parent = NULL);
-  explicit Jpeg(const QString &file_name, QObject *parent = NULL);
+  explicit Jpeg(QByteArray *data);
+  explicit Jpeg(QIODevice *file);
+  explicit Jpeg(const QString &file_name);
   bool IsValid();
 
  private:

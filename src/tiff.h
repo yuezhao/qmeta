@@ -33,10 +33,9 @@ namespace qmeta {
 
 class Tiff : public File {
  public:
-  explicit Tiff(QObject *parent = NULL);
-  explicit Tiff(QByteArray *data, QObject *parent = NULL);
-  explicit Tiff(QIODevice *file, QObject *parent = NULL);
-  explicit Tiff(const QString &file_name, QObject *parent = NULL);
+  explicit Tiff(QByteArray *data);
+  explicit Tiff(QIODevice *file);
+  explicit Tiff(const QString &file_name);
   bool IsValid();
 
  private:
