@@ -30,12 +30,13 @@
 
 #include "exif_data.h"
 #include "identifiers.h"
+#include "standard.h"
 
 class QIODevice;
 
 namespace qmeta {
 
-class Exif : public QObject {
+class Exif : public Standard {
   Q_OBJECT
 
  public:
@@ -223,8 +224,6 @@ class Exif : public QObject {
   void set_endianness(Endianness endian) { endianness_ = endian; }
   QHash<Type, int> type_byte_unit() const { return type_byte_unit_; }
   void set_type_byte_unit(QHash<Type, int> unit) { type_byte_unit_ = unit; }
-  QIODevice* file() const { return file_; }
-  void set_file(QIODevice *file) { file_ = file; }
   int first_ifd_offset() const { return first_ifd_offset_; }
   void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
   FileType file_type() const { return file_type_; }
@@ -232,8 +231,6 @@ class Exif : public QObject {
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
   void set_tag_offsets(QHash<Tag, int> offset) { tag_offsets_ = offset; }
-  int tiff_header_offset() const { return tiff_header_offset_; }
-  void set_tiff_header_offset(int offset) { tiff_header_offset_ = offset; }
   QHash<Type, QString> type_names() const { return type_names_; }
   void set_type_names(QHash<Type, QString> names) { type_names_ = names; }
 
@@ -241,8 +238,6 @@ class Exif : public QObject {
   Endianness endianness_;
   // The byte unit for filed types used in Exif.
   QHash<Type, int> type_byte_unit_;
-  // Tracks the file containing this EXIF data.
-  QIODevice *file_;
   // The offset of the first IFD.
   int first_ifd_offset_;
   // The type of the tracked file.
@@ -251,8 +246,6 @@ class Exif : public QObject {
   QHash<Tag, QString> tag_names_;
   // Records offsets of tags used in Exif.
   QHash<Tag, int> tag_offsets_;
-  // The offset of the TIFF header.
-  int tiff_header_offset_;
   // The type names to read for human.
   QHash<Type, QString> type_names_;
 };

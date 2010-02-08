@@ -30,21 +30,21 @@
 
 namespace qmeta {
 
-Exif::Exif(QObject *parent) : QObject(parent) {
+Exif::Exif(QObject *parent) : Standard(parent) {
   InitTagNames();
   InitTypeByteUnit();
   InitTypeNames();
 }
 
 // Initializes the Exif object by storing the specified file and
-// tiff_header_offset. It also determines the byte order and the offset of
+// file_start_offset. It also determines the byte order and the offset of
 // the first IFD. Returns true if the TIFF header is valid.
-bool Exif::Init(QIODevice *file, const int tiff_header_offset, FileType type) {
-  set_tiff_header_offset(tiff_header_offset);
+bool Exif::Init(QIODevice *file, const int file_start_offset, FileType type) {
+  set_file_start_offset(file_start_offset);
   set_file(file);
   set_file_type(type);
 
-  file->seek(tiff_header_offset);
+  file->seek(file_start_offset);
   // Determines the byte order in the specified file.
   QByteArray byte_order = file->read(2);
   if (byte_order == "II")
@@ -258,7 +258,7 @@ QByteArray Exif::IfdEntryValue(const int ifd_entry_offset) {
   // Determines the offset for the entry value.
   int offset = 0;
   if (byte_count > 4)
-    offset = ReadFromFile(4).toHex().toInt(NULL, 16) + tiff_header_offset();
+    offset = ReadFromFile(4).toHex().toInt(NULL, 16) + file_start_offset();
   else
     offset = ifd_entry_offset + 8;
   // Jumps to the offset contains the entry value.
@@ -303,7 +303,7 @@ bool Exif::ReadIfds(int ifd_offset) {
 
     if (tag == kExifIfdPointer || tag == kGpsInfoIfdPointer) {
       QByteArray value = IfdEntryValue(ifd_entry_offset);
-      ReadIfds(value.toHex().toUInt(NULL, 16) + tiff_header_offset());
+      ReadIfds(value.toHex().toUInt(NULL, 16) + file_start_offset());
     }
   }
 
@@ -313,7 +313,7 @@ bool Exif::ReadIfds(int ifd_offset) {
   if (next_ifd_offset == 0)
     return true;
   else
-    return ReadIfds(next_ifd_offset + tiff_header_offset());
+    return ReadIfds(next_ifd_offset + file_start_offset());
 }
 
 // Reads at most max_size bytes from the tracked file object, and returns the
@@ -331,7 +331,7 @@ QByteArray Exif::Thumbnail() {
   quint32 thumbnail_offset = Value(kJPEGInterchangeFormat).ToUInt();
   quint32 length = Value(kJPEGInterchangeFormatLength).ToUInt();
   if (thumbnail_offset && length) {
-    thumbnail_offset += tiff_header_offset();
+    thumbnail_offset += file_start_offset();
     file()->seek(thumbnail_offset);
     thumbnail = file()->read(length);
   }
