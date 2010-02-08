@@ -47,6 +47,7 @@ class File : public QObject {
   QIODevice* file() const { return file_; }
   // Initializes the Exif object.
   virtual void InitExif() {};
+  virtual void InitIptc() {};
   void InitMetadata();
 
  private:

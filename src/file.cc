@@ -71,6 +71,7 @@ void File::InitMetadata() {
     return;
 
   InitExif();
+  InitIptc();
 }
 
 }  // namespace qmeta

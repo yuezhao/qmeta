@@ -83,4 +83,55 @@ void Jpeg::InitExif() {
     set_exif(exif);
 }
 
+// Reimplements the File::InitIptc().
+void Jpeg::InitIptc() {
+  // Finds the APP13 marker.
+  file()->seek(2);
+  while (!file()->atEnd()) {
+    if (file()->read(1).toHex() != "ff")
+      continue;
+    if (file()->read(1).toHex() != "ed")
+      continue;
+    break;
+  }
+  // Returns if there is not APP13 marker.
+  if (file()->atEnd())
+    return;
+
+  // Skips the ";xPhotoshop 3.0" string.
+  QByteArray c = file()->read(16);
+
+  bool found_iptc = false;
+  // Interators the Image Resource Blocks to find IPTC data. If found, sets the
+  // `found_iptc` to true and gets out of the loop.
+  while (QString(file()->read(4)) == "8BIM") {
+    int identifier = file()->read(2).toHex().toInt(NULL, 16);
+    // Skips the variable name in Pascal string, padded to make the size even.
+    // A null name consists of two bytes of 0.
+    int name_length = file()->read(1).toHex().toInt(NULL, 16);
+    if (name_length == 0)
+      file()->read(1);
+    else if (name_length % 2 == 1)
+      file()->read(name_length);
+    else
+      file()->read(name_length + 1);
+    // Determines the actual size of resource data that follows.
+    int data_length = file()->read(4).toHex().toInt(NULL, 16);
+    // Determines if the current block is used to record the IPTC data.
+    // If true, the identifier should be 1028 in decimal.
+    if (identifier == 1028) {
+      found_iptc = true;
+      break;
+    } else {
+      file()->read(data_length);
+    }
+  }
+  // Returns if there is no IPTC data.
+  if (!found_iptc)
+    return;
+
+  int iptc_pos = file()->pos();
+  // TODO (olliwang): creates the IPTC object according to the found position.
+}
+
 }  // namespace qmeta

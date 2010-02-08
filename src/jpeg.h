@@ -40,6 +40,7 @@ class Jpeg : public File {
 
  private:
   void InitExif();
+  void InitIptc();
 };
 
 }  // namespace qmeta
