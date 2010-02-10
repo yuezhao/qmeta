@@ -98,8 +98,12 @@ void Jpeg::InitIptc() {
   if (file()->atEnd())
     return;
 
-  // Skips the ";xPhotoshop 3.0" string.
-  QByteArray c = file()->read(16);
+  // Skips segment size marker.
+  file()->read(2);
+
+  // Checks the Photoshop idenfication string: "Photoshop 3.0\x00"
+  if (file()->read(14).toHex() != "50686f746f73686f7020332e3000")
+    return;
 
   bool found_iptc = false;
   // Interators the Image Resource Blocks to find IPTC data. If found, sets the
