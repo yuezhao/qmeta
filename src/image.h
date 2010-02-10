@@ -30,6 +30,7 @@
 #include "exif.h"
 #include "file.h"
 #include "identifiers.h"
+#include "iptc.h"
 #include "jpeg.h"
 #include "tiff.h"
 
