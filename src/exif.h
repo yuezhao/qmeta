@@ -204,7 +204,7 @@ class Exif : public Standard {
   };
 
   explicit Exif(QObject *parent = NULL);
-  bool Init(QIODevice *file, const int tiff_header_offset, FileType type);
+  bool Init(QIODevice *file, const qint64 tiff_header_offset, FileType type);
   QByteArray Thumbnail();
   ExifData Value(Tag tag);
 
@@ -228,8 +228,8 @@ class Exif : public Standard {
   FileType file_type() const { return file_type_; }
   void set_file_type(FileType type) { file_type_ = type; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
-  QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
-  void set_tag_offsets(QHash<Tag, int> offset) { tag_offsets_ = offset; }
+  QHash<Tag, qint64> tag_offsets() const { return tag_offsets_; }
+  void set_tag_offsets(QHash<Tag, qint64> offset) { tag_offsets_ = offset; }
   QHash<Type, QString> type_names() const { return type_names_; }
   void set_type_names(QHash<Type, QString> names) { type_names_ = names; }
 
@@ -244,7 +244,7 @@ class Exif : public Standard {
   // The tag names to read for human.
   QHash<Tag, QString> tag_names_;
   // Records offsets of tags used in Exif.
-  QHash<Tag, int> tag_offsets_;
+  QHash<Tag, qint64> tag_offsets_;
   // The type names to read for human.
   QHash<Type, QString> type_names_;
 };

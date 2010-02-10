@@ -34,7 +34,7 @@ Iptc::Iptc(QObject *parent) : Standard(parent) {
 }
 
 // Initializes the IPTC object. Returns false if no valid tag is found.
-bool Iptc::Init(QIODevice *file, const int file_start_offset) {
+bool Iptc::Init(QIODevice *file, const qint64 file_start_offset) {
   set_file(file);
   set_file_start_offset(file_start_offset);
   return ReadRecord();
@@ -144,9 +144,9 @@ QByteArray Iptc::ReadDataSet(int offset) {
 // no tag is found.
 bool Iptc::ReadRecord() {
   file()->seek(file_start_offset());
-  QHash<Tag, int> tag_offsets;
+  QHash<Tag, qint64> tag_offsets;
   while (file()->read(2).toHex() == "1c02") {
-    int tag_offset = file()->pos();
+    qint64 tag_offset = file()->pos();
     Tag tag = static_cast<Tag>(file()->read(1).toHex().toInt(NULL, 16));
     QByteArray data = ReadDataSet(tag_offset);
 

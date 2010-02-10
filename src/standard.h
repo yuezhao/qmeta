@@ -41,13 +41,13 @@ class Standard : public QObject {
  protected:
   QIODevice* file() const { return file_; }
   void set_file(QIODevice *file) { file_ = file; }
-  int file_start_offset() const { return file_start_offset_; }
-  void set_file_start_offset(int offset) { file_start_offset_ = offset; }
+  qint64 file_start_offset() const { return file_start_offset_; }
+  void set_file_start_offset(qint64 offset) { file_start_offset_ = offset; }
 
   // Tracks the file containing the metadata.
   QIODevice *file_;
   // The offset of the beginning of the metadata standard in the tracked file.
-  int file_start_offset_;
+  qint64 file_start_offset_;
 };
 
 }  // namespace qmeta

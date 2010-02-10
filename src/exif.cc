@@ -39,7 +39,8 @@ Exif::Exif(QObject *parent) : Standard(parent) {
 // Initializes the Exif object by storing the specified file and
 // file_start_offset. It also determines the byte order and the offset of
 // the first IFD. Returns true if the TIFF header is valid.
-bool Exif::Init(QIODevice *file, const int file_start_offset, FileType type) {
+bool Exif::Init(QIODevice *file, const qint64 file_start_offset,
+                FileType type) {
   set_file_start_offset(file_start_offset);
   set_file(file);
   set_file_type(type);
@@ -290,9 +291,9 @@ bool Exif::ReadIfds(int ifd_offset) {
   int entry_count = ReadFromFile(2).toHex().toInt(NULL, 16);
 
   // Reads a sequence of 12-byte field entries.
-  QHash<Tag, int> offsets = tag_offsets();
+  QHash<Tag, qint64> offsets = tag_offsets();
   for (int i = 0; i < entry_count; ++i) {
-    int ifd_entry_offset = (ifd_offset + 2) + (i * 12);
+    qint64 ifd_entry_offset = (ifd_offset + 2) + (i * 12);
     Tag tag = IfdEntryTag(ifd_entry_offset);
     if (!tag_names().contains(tag))
       continue;

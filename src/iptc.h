@@ -99,7 +99,7 @@ class Iptc : public Standard {
   };
 
   explicit Iptc(QObject *parent = NULL);
-  bool Init(QIODevice *file, const int file_start_offset);
+  bool Init(QIODevice *file, const qint64 file_start_offset);
 
   QHash<Tag, QString> tag_names() const { return tag_names_; }
 
@@ -112,15 +112,15 @@ class Iptc : public Standard {
   QList<Tag> repeatable_tags() const { return repeatable_tags_; }
   void set_repeatable_tags(QList<Tag> tags) { repeatable_tags_ = tags; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
-  QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
-  void set_tag_offsets(QHash<Tag, int> offsets) { tag_offsets_ = offsets; }
+  QHash<Tag, qint64> tag_offsets() const { return tag_offsets_; }
+  void set_tag_offsets(QHash<Tag, qint64> offsets) { tag_offsets_ = offsets; }
 
   // Records the repeatable tags.
   QList<Tag> repeatable_tags_;
   // The tag names to read for human.
   QHash<Tag, QString> tag_names_;
   // Records offsets of tags used in IPTC.
-  QHash<Tag, int> tag_offsets_;
+  QHash<Tag, qint64> tag_offsets_;
 };
 
 }  // namespace qmeta
