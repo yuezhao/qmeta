@@ -229,7 +229,7 @@ class Exif : public Standard {
   void set_file_type(FileType type) { file_type_ = type; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   QHash<Tag, qint64> tag_offsets() const { return tag_offsets_; }
-  void set_tag_offsets(QHash<Tag, qint64> offset) { tag_offsets_ = offset; }
+  void set_tag_offsets(QHash<Tag, qint64> offsets) { tag_offsets_ = offsets; }
   QHash<Type, QString> type_names() const { return type_names_; }
   void set_type_names(QHash<Type, QString> names) { type_names_ = names; }
 
