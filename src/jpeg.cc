@@ -81,6 +81,8 @@ void Jpeg::InitExif() {
   Exif *exif = new Exif(this);
   if (exif->Init(file(), file()->pos(), kJpegFileType))
     set_exif(exif);
+  else
+    delete exif;
 }
 
 // Reimplements the File::InitIptc().

@@ -75,6 +75,8 @@ void Tiff::InitExif() {
   Exif *exif = new Exif(this);
   if (exif->Init(file(), 0, kTiffFileType))
     set_exif(exif);
+  else
+    delete exif;
 }
 
 }  // namespace qmeta
