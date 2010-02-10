@@ -43,6 +43,7 @@ HEADERS += src/exif.h \
            src/file.h \
            src/identifiers.h \
            src/image.h \
+           src/iptc.h \
            src/jpeg.h \
            src/standard.h \
            src/tiff.h
@@ -50,6 +51,7 @@ SOURCES += src/exif.cc \
            src/exif_data.cc \
            src/file.cc \
            src/image.cc \
+           src/iptc.cc \
            src/jpeg.cc \
            src/standard.cc \
            src/tiff.cc

@@ -26,7 +26,6 @@
 #define QMETA_EXIF_H_
 
 #include <QHash>
-#include <QObject>
 
 #include "exif_data.h"
 #include "identifiers.h"

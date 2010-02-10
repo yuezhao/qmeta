@@ -28,6 +28,7 @@
 #include <qitty/byte_array.h>
 
 #include "exif.h"
+#include "iptc.h"
 
 namespace qmeta {
 
@@ -136,8 +137,12 @@ void Jpeg::InitIptc() {
   if (!found_iptc)
     return;
 
-  int iptc_pos = file()->pos();
-  // TODO (olliwang): creates the IPTC object according to the found position.
+  // Creates the Iptc object.
+  Iptc *iptc = new Iptc(this);
+  if (iptc->Init(file(), file()->pos()))
+    set_iptc(iptc);
+  else
+    delete iptc;
 }
 
 }  // namespace qmeta

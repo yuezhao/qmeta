@@ -33,22 +33,27 @@ class QIODevice;
 namespace qmeta {
 
 class Exif;
+class Iptc;
 
 class File : public QObject {
  public:
   explicit File(QByteArray *data);
   explicit File(QIODevice *file);
   explicit File(const QString &file_name);
-  Exif* exif() const { return exif_; }
   QByteArray Thumbnail();
 
+  Exif* exif() const { return exif_; }
+  Iptc* iptc() const { return iptc_; }
+
  protected:
-  void set_exif(Exif *exif) { exif_ = exif; }
-  QIODevice* file() const { return file_; }
   // Initializes the Exif object.
   virtual void InitExif() {};
   virtual void InitIptc() {};
   void InitMetadata();
+
+  void set_exif(Exif *exif) { exif_ = exif; }
+  QIODevice* file() const { return file_; }
+  void set_iptc(Iptc *iptc) { iptc_ = iptc; }
 
  private:
   // Returns true if the tracked file is valid. This function should be
@@ -58,10 +63,13 @@ class File : public QObject {
   void set_file(QIODevice *file) { file_ = file; }
 
   // The corresponded Exif object of the tracked file. This property is set
-  // if the tracked file supports the EXIF specification.
+  // if the tracked file supports the EXIF standard.
   Exif *exif_;
   // Tracks the current opened file.
   QIODevice *file_;
+  // The corresponded Iptc object of the tracked file. This property is set
+  // if the tracked file supports the IPTC standard.
+  Iptc *iptc_;
 };
 
 }  // namespace qmeta
