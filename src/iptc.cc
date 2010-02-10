@@ -163,4 +163,27 @@ bool Iptc::ReadRecord() {
   return true;
 }
 
+// Returns the value associated with the specified tag.
+QByteArray Iptc::Value(Tag tag) {
+  QByteArray value;
+  if (tag_offsets().contains(tag)) {
+    int offset = tag_offsets().value(tag);
+    value = ReadDataSet(offset);
+  }
+  return value;
+}
+
+// Returns a lit containing all the values associated with the specified tag.
+QList<QByteArray> Iptc::Values(Tag tag) {
+  QList<QByteArray> values;
+  QList<qint64> offsets = tag_offsets().values(tag);
+  for (int i = 0; i < offsets.count(); ++i) {
+    qint64 offset = offsets.at(i);
+    QByteArray value = ReadDataSet(offset);
+    values.append(value);
+  }
+  qSort(values);
+  return values;
+}
+
 }  // namespace qmeta

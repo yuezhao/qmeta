@@ -100,6 +100,8 @@ class Iptc : public Standard {
 
   explicit Iptc(QObject *parent = NULL);
   bool Init(QIODevice *file, const qint64 file_start_offset);
+  QByteArray Value(Tag tag);
+  QList<QByteArray> Values(Tag tag);
 
   QHash<Tag, QString> tag_names() const { return tag_names_; }
 

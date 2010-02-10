@@ -33,6 +33,7 @@ namespace qmeta {
 // Constructs a file from the given QByteArray data.
 File::File(QByteArray *data) {
   set_exif(NULL);
+  set_iptc(NULL);
   QBuffer *file = new QBuffer(data, this);
   if (file->open(QIODevice::ReadOnly))
     set_file(file);
@@ -43,12 +44,14 @@ File::File(QByteArray *data) {
 // Constructs a file from the given QIODevice file.
 File::File(QIODevice *file) {
   set_exif(NULL);
+  set_iptc(NULL);
   set_file(file);
 }
 
 // Constructs a file and tries to load the file with the given file_name.
 File::File(const QString &file_name) {
   set_exif(NULL);
+  set_iptc(NULL);
   QFile *file = new QFile(file_name, this);
   if (file->open(QIODevice::ReadOnly))
     set_file(file);
