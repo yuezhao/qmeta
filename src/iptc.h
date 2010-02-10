@@ -113,7 +113,7 @@ class Iptc : public Standard {
   void set_repeatable_tags(QList<Tag> tags) { repeatable_tags_ = tags; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   QHash<Tag, int> tag_offsets() const { return tag_offsets_; }
-  void set_tag_offsets(QHash<Tag, int> offset) { tag_offsets_ = offset; }
+  void set_tag_offsets(QHash<Tag, int> offsets) { tag_offsets_ = offsets; }
 
   // Records the repeatable tags.
   QList<Tag> repeatable_tags_;
