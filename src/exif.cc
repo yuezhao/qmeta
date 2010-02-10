@@ -290,6 +290,7 @@ bool Exif::ReadIfds(int ifd_offset) {
   int entry_count = ReadFromFile(2).toHex().toInt(NULL, 16);
 
   // Reads a sequence of 12-byte field entries.
+  QHash<Tag, int> offsets = tag_offsets();
   for (int i = 0; i < entry_count; ++i) {
     int ifd_entry_offset = (ifd_offset + 2) + (i * 12);
     Tag tag = IfdEntryTag(ifd_entry_offset);
@@ -297,15 +298,14 @@ bool Exif::ReadIfds(int ifd_offset) {
       continue;
 
     // Keeps the tag and its offset.
-    QHash<Tag, int> offset = tag_offsets();
-    offset.insert(tag, ifd_entry_offset);
-    set_tag_offsets(offset);
+    offsets.insert(tag, ifd_entry_offset);
 
     if (tag == kExifIfdPointer || tag == kGpsInfoIfdPointer) {
       QByteArray value = IfdEntryValue(ifd_entry_offset);
       ReadIfds(value.toHex().toUInt(NULL, 16) + file_start_offset());
     }
   }
+  set_tag_offsets(offsets);
 
   // Reads the offset of the next IFD.
   file()->seek((ifd_offset + 2) + (entry_count * 12));
