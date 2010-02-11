@@ -35,6 +35,8 @@ class QIODevice;
 
 namespace qmeta {
 
+class TiffHeader;
+
 class Exif : public Standard {
   Q_OBJECT
 
@@ -180,31 +182,9 @@ class Exif : public Standard {
     kGPSDateStamp = 29,  // GPS date
     kGPSDifferential = 30,  // GPS differential correction
   };
-  // Field types are used in Exif.
-  enum Type {
-    // An 8-bit unsigned integer.
-    kByteType = 1,
-    // An 8-bit byte containing one 7-bit ASCII code. The final byte is
-    // terminated with NULL.
-    kAsciiType = 2,
-    // A 16-bit (2-byte) unsigned integer.
-    kShortType = 3,
-    // A 32-bit (4-byte) unsigned integer.
-    kLongType = 4,
-    // Two LONGs. The first LONG is the numerator and the second LONG expresses
-    // the denominator.
-    kRationalType = 5,
-    // An 8-bit byte that can take any value depending ont he field definition.
-    kUndefinedType = 7,
-    // A 32-bit (4-byte) signed integer (2's complement notation)
-    kSlongType = 9,
-    // Two SLONGs. The first SLONG is the numerator and the second SLONG is the
-    // denominator.
-    kSrationalType = 10,
-  };
 
   explicit Exif(QObject *parent = NULL);
-  bool Init(QIODevice *file, const qint64 tiff_header_offset, FileType type);
+  bool Init(QIODevice *file, TiffHeader *tiff_header);
   QByteArray Thumbnail();
   ExifData Value(Tag tag);
 
@@ -212,41 +192,20 @@ class Exif : public Standard {
 
  private:
   void InitTagNames();
-  void InitTypeByteUnit();
-  void InitTypeNames();
-  QByteArray ReadFromFile(const int max_size);
-  bool ReadIfds(int ifd_offset);
-  Tag IfdEntryTag(const int ifd_entry_offset);
-  QByteArray IfdEntryValue(const int ifd_entry_offset);
+  void ReadIfds(int ifd_offset);
 
-  Endianness endianness() const { return endianness_; }
-  void set_endianness(Endianness endian) { endianness_ = endian; }
-  QHash<Type, int> type_byte_unit() const { return type_byte_unit_; }
-  void set_type_byte_unit(QHash<Type, int> unit) { type_byte_unit_ = unit; }
-  int first_ifd_offset() const { return first_ifd_offset_; }
-  void set_first_ifd_offset(int offset) { first_ifd_offset_ = offset; }
-  FileType file_type() const { return file_type_; }
-  void set_file_type(FileType type) { file_type_ = type; }
   void set_tag_names(QHash<Tag, QString> names) { tag_names_ = names; }
   QHash<Tag, qint64> tag_offsets() const { return tag_offsets_; }
   void set_tag_offsets(QHash<Tag, qint64> offsets) { tag_offsets_ = offsets; }
-  QHash<Type, QString> type_names() const { return type_names_; }
-  void set_type_names(QHash<Type, QString> names) { type_names_ = names; }
+  TiffHeader* tiff_header() const { return tiff_header_; }
+  void set_tiff_header(TiffHeader *tiff_header) { tiff_header_ = tiff_header; }
 
-  // The byte order of the TIFF file.
-  Endianness endianness_;
-  // The byte unit for filed types used in Exif.
-  QHash<Type, int> type_byte_unit_;
-  // The offset of the first IFD.
-  int first_ifd_offset_;
-  // The type of the tracked file.
-  FileType file_type_;
   // The tag names to read for human.
   QHash<Tag, QString> tag_names_;
   // Records offsets of tags used in Exif.
   QHash<Tag, qint64> tag_offsets_;
-  // The type names to read for human.
-  QHash<Type, QString> type_names_;
+  // Tracks the TiffHeader object.
+  TiffHeader *tiff_header_;
 };
 
 }  // namespace qmeta

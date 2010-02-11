@@ -25,53 +25,28 @@
 #include "exif.h"
 
 #include <QtCore>
-
 #include <qitty/byte_array.h>
+
+#include "tiff_header.h"
 
 namespace qmeta {
 
 Exif::Exif(QObject *parent) : Standard(parent) {
   InitTagNames();
-  InitTypeByteUnit();
-  InitTypeNames();
+  QHash<Tag, qint64> tag_offsets;
+  set_tag_offsets(tag_offsets);
 }
 
-// Initializes the Exif object by storing the specified file and
-// file_start_offset. It also determines the byte order and the offset of
-// the first IFD. Returns true if the TIFF header is valid.
-bool Exif::Init(QIODevice *file, const qint64 file_start_offset,
-                FileType type) {
-  set_file_start_offset(file_start_offset);
+// Initializes the Exif object.
+bool Exif::Init(QIODevice *file, TiffHeader *tiff_header) {
   set_file(file);
-  set_file_type(type);
-
-  file->seek(file_start_offset);
-  // Determines the byte order in the specified file.
-  QByteArray byte_order = file->read(2);
-  if (byte_order == "II")
-    set_endianness(kLittleEndians);
-  else if (byte_order == "MM")
-    set_endianness(kBigEndians);
+  set_tiff_header(tiff_header);
+  tiff_header->ToFirstIfd();
+  ReadIfds(tiff_header->current_ifd_offset());
+  if (tag_offsets().count() == 0)
+    return false;
   else
-    return false;
-
-  // Further identifies whether the specified file has a valid TIFF header.
-  // Reads the next two bytes which should have the value of 42 in decimal.
-  if (ReadFromFile(2).toHex().toInt(NULL, 16) != 42)
-    return false;
-
-  // Reads the next four bytes to determine the offset of the first IFD.
-  int first_ifd_offset = ReadFromFile(4).toHex().toInt(NULL, 16);
-  // Sets the offset to the current position if the read value equals to 8.
-  // The reason is for JPEG files, if the TIFF header is followed immediately
-  // by the first IFD, it is written as 00000008 in hexidecimal.
-  if (first_ifd_offset == 8)
-    first_ifd_offset = file->pos();
-  else if (first_ifd_offset == -1)
-    return false;
-  set_first_ifd_offset(first_ifd_offset);
-
-  return ReadIfds(first_ifd_offset);
+    return true;
 }
 
 // Initializes tag names used in Exif.
@@ -210,120 +185,33 @@ void Exif::InitTagNames() {
   set_tag_names(tag_names);
 }
 
-// Initializes the byte unit for field types used in Exif.
-void Exif::InitTypeByteUnit() {
-  QHash<Type, int> type_byte_unit;
-  type_byte_unit.insert(kByteType, 1);
-  type_byte_unit.insert(kAsciiType, 1);
-  type_byte_unit.insert(kShortType, 2);
-  type_byte_unit.insert(kLongType, 4);
-  type_byte_unit.insert(kRationalType, 8);
-  type_byte_unit.insert(kUndefinedType, 1);
-  type_byte_unit.insert(kSlongType, 4);
-  type_byte_unit.insert(kSrationalType, 8);
-  set_type_byte_unit(type_byte_unit);
-}
+// Reads all IFDs from the specified ifd_offset and saved
+void Exif::ReadIfds(int ifd_offset) {
+  tiff_header()->ToIfd(ifd_offset);
 
-// Initializes the type names used in Exif.
-void Exif::InitTypeNames() {
-  QHash<Type, QString> type_names;
-  type_names.insert(kByteType, "Byte");
-  type_names.insert(kAsciiType, "ASCII");
-  type_names.insert(kShortType, "SHORT");
-  type_names.insert(kLongType, "LONG");
-  type_names.insert(kRationalType, "RATIONAL");
-  type_names.insert(kUndefinedType, "UNDEFINED");
-  type_names.insert(kSlongType, "SLONG");
-  type_names.insert(kSrationalType, "SRATIONAL");
-  set_type_names(type_names);
-}
-
-// Returns the tag of the IFD entry at the specified ifd_entry_offset.
-Exif::Tag Exif::IfdEntryTag(const int ifd_entry_offset) {
-  file()->seek(ifd_entry_offset);
-  return static_cast<Tag>(ReadFromFile(2).toHex().toInt(NULL, 16));
-}
-
-// Returns the value of the IFD entry from the specified value_offset.
-QByteArray Exif::IfdEntryValue(const int ifd_entry_offset) {
-  // Jumps the tag bytes.
-  file()->seek(ifd_entry_offset + 2);
-  // Extracts the Type of the current entry.
-  Type type = static_cast<Type>(ReadFromFile(2).toHex().toInt(NULL, 16));
-  // Extracts the Count of the current entry.
-  int count = ReadFromFile(4).toHex().toInt(NULL, 16);
-  // Retrieves the byte unit of the specified type.
-  int byte_unit = type_byte_unit().value(type);
-  // Calculates the number of bytes used for the entry value.
-  int byte_count = byte_unit * count;
-  // Determines the offset for the entry value.
-  int offset = 0;
-  if (byte_count > 4)
-    offset = ReadFromFile(4).toHex().toInt(NULL, 16) + file_start_offset();
-  else
-    offset = ifd_entry_offset + 8;
-  // Jumps to the offset contains the entry value.
-  file()->seek(offset);
-
-  QByteArray value;
-  if (byte_unit == 1) {
-    value = file()->read(byte_count);
-  } else {
-    for (int i = 0; i < count; ++i) {
-      // If the specified type is RATIONAL or SRATIONAL, read 4 bytes twice
-      // for double LONG or double SLONG, respectively.
-      if (byte_unit == 8) {
-        value.append(ReadFromFile(4));
-        value.append(ReadFromFile(4));
-      } else {
-        value.append(ReadFromFile(byte_unit));
-      }
-    }
-  }
-  return value;
-}
-
-// Reads IFDs recursively from the specified ifd_offset. Returns true if
-// successful.
-bool Exif::ReadIfds(int ifd_offset) {
-  file()->seek(ifd_offset);
-  // Reads the 2-byte count of the number of directory entries.
-  int entry_count = ReadFromFile(2).toHex().toInt(NULL, 16);
-
+  QList<qint64> ifd_offsets;
   // Reads a sequence of 12-byte field entries.
-  QHash<Tag, qint64> offsets = tag_offsets();
-  for (int i = 0; i < entry_count; ++i) {
-    qint64 ifd_entry_offset = (ifd_offset + 2) + (i * 12);
-    Tag tag = IfdEntryTag(ifd_entry_offset);
+  while (tiff_header()->HasNextIfdEntry()) {
+    qint64 ifd_entry_offset = tiff_header()->NextIfdEntryOffset();
+    Tag tag = static_cast<Tag>(tiff_header()->IfdEntryTag(ifd_entry_offset));
+
     if (!tag_names().contains(tag))
       continue;
 
-    // Keeps the tag and its offset.
+    QHash<Tag, qint64> offsets = tag_offsets();
     offsets.insert(tag, ifd_entry_offset);
+    set_tag_offsets(offsets);
 
     if (tag == kExifIfdPointer || tag == kGpsInfoIfdPointer) {
-      QByteArray value = IfdEntryValue(ifd_entry_offset);
-      ReadIfds(value.toHex().toUInt(NULL, 16) + file_start_offset());
+      QByteArray entry_value = tiff_header()->IfdEntryValue(ifd_entry_offset);
+      qint64 ifd_pointer_offset = entry_value.toHex().toUInt(NULL, 16) +
+                                  tiff_header()->file_start_offset();
+      ifd_offsets.append(ifd_pointer_offset);
     }
   }
-  set_tag_offsets(offsets);
-
-  // Reads the offset of the next IFD.
-  file()->seek((ifd_offset + 2) + (entry_count * 12));
-  int next_ifd_offset = ReadFromFile(4).toHex().toInt(NULL, 16);
-  if (next_ifd_offset == 0)
-    return true;
-  else
-    return ReadIfds(next_ifd_offset + file_start_offset());
-}
-
-// Reads at most max_size bytes from the tracked file object, and returns the
-// data read as a QByteArray in big-endian byte order.
-QByteArray Exif::ReadFromFile(const int max_size) {
-  QByteArray data = file()->read(max_size);
-  if (endianness() == kLittleEndians)
-    data = qitty_utils::ReverseByteArray(data);
-  return data;
+  for (int i = 0; i < ifd_offsets.count(); ++i) {
+    ReadIfds(ifd_offsets.at(i));
+  }
 }
 
 // Returns the byte data of the thumbnail saved in Exif.
@@ -332,7 +220,7 @@ QByteArray Exif::Thumbnail() {
   quint32 thumbnail_offset = Value(kJPEGInterchangeFormat).ToUInt();
   quint32 length = Value(kJPEGInterchangeFormatLength).ToUInt();
   if (thumbnail_offset && length) {
-    thumbnail_offset += file_start_offset();
+    thumbnail_offset += tiff_header()->file_start_offset();
     file()->seek(thumbnail_offset);
     thumbnail = file()->read(length);
   }
@@ -343,7 +231,7 @@ QByteArray Exif::Thumbnail() {
 ExifData Exif::Value(Tag tag) {
   QByteArray value;
   if (tag_offsets().contains(tag))
-    value = IfdEntryValue(tag_offsets().value(tag));
+    value = tiff_header()->IfdEntryValue(tag_offsets().value(tag));
   ExifData exif_data(value);
   return exif_data;
 }

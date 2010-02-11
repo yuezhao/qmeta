@@ -29,6 +29,7 @@
 
 #include "exif.h"
 #include "iptc.h"
+#include "tiff_header.h"
 
 namespace qmeta {
 
@@ -78,12 +79,17 @@ void Jpeg::InitExif() {
   if (file()->atEnd())
     return;
 
-  // Creates the Exif object.
-  Exif *exif = new Exif(this);
-  if (exif->Init(file(), file()->pos(), kJpegFileType))
-    set_exif(exif);
-  else
-    delete exif;
+  TiffHeader *tiff_header = new TiffHeader(this);
+  if (tiff_header->Init(file(), file()->pos())) {
+    // Creates the Exif object.
+    Exif *exif = new Exif(this);
+    if (exif->Init(file(), tiff_header))
+      set_exif(exif);
+    else
+      delete exif;
+  } else {
+    delete tiff_header;
+  }
 }
 
 // Reimplements the File::InitIptc().

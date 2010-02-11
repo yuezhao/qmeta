@@ -31,15 +31,24 @@ class QString;
 
 namespace qmeta {
 
+class TiffHeader;
+
 class Tiff : public File {
  public:
   explicit Tiff(QByteArray *data);
   explicit Tiff(QIODevice *file);
   explicit Tiff(const QString &file_name);
+  void Init();
   bool IsValid();
 
  private:
   void InitExif();
+
+  TiffHeader* tiff_header() const { return tiff_header_; }
+  void set_tiff_header(TiffHeader *tiff_header) { tiff_header_ = tiff_header; }
+
+  // Tracks the TiffHeader object of the tracked file.
+  TiffHeader *tiff_header_;
 };
 
 }  // namespace qmeta

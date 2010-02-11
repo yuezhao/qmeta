@@ -28,18 +28,33 @@
 #include <qitty/byte_array.h>
 
 #include "exif.h"
+#include "tiff_header.h"
 
 namespace qmeta {
 
 Tiff::Tiff(QByteArray *data) : File(data) {
-  InitMetadata();
+  Init();
 }
 
 Tiff::Tiff(QIODevice *file) : File(file) {
-  InitMetadata();
+  Init();
 }
 
 Tiff::Tiff(const QString &file_name) : File(file_name) {
+  Init();
+}
+
+// Initializes the Tiff object.
+void Tiff::Init() {
+  if (!file())
+    return;
+
+  TiffHeader *tiff_header = new TiffHeader(this);
+  if (tiff_header->Init(file(), 0))
+    set_tiff_header(tiff_header);
+  else
+    set_tiff_header(NULL);
+
   InitMetadata();
 }
 
@@ -48,35 +63,24 @@ bool Tiff::IsValid() {
   if (!file())
     return false;
 
-  file()->seek(0);
-  // Determines the byte order in the specified file.
-  QByteArray byte_order = file()->read(2);
-  QByteArray fourty_two = file()->read(2);
-  if (byte_order == "II")
-    // The byte order is little-endian. Exchanges the bytes in fourty_two.
-    fourty_two = qitty_utils::ReverseByteArray(fourty_two);
-  else if (byte_order == "MM")
-    // The byte order is big-endian. No need to change the bytes in fourty_two.
-    fourty_two = fourty_two;
+  if (tiff_header())
+    return true;
   else
     return false;
-
-  // Further identifies whether the specified file has a valid TIFF header.
-  // The fourty_two should have the value of 42 in decimal.
-  if (fourty_two.toHex().toInt(NULL, 16) != 42)
-    return false;
-
-  return true;
 }
 
 // Reimplements the File::InitExif().
 void Tiff::InitExif() {
-  // Creates the Exif object.
-  Exif *exif = new Exif(this);
-  if (exif->Init(file(), 0, kTiffFileType))
-    set_exif(exif);
-  else
-    delete exif;
+  if (tiff_header()) {
+    // Creates the Exif object.
+    Exif *exif = new Exif(this);
+    if (exif->Init(file(), tiff_header()))
+      set_exif(exif);
+    else
+      delete exif;
+  }
+}
+
 }
 
 }  // namespace qmeta
