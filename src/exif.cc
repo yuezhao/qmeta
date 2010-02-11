@@ -81,14 +81,14 @@ void Exif::InitTagNames() {
   tag_names.insert(kExifIfdPointer, tr("Exif IFD Pointer"));
   tag_names.insert(kGpsInfoIfdPointer, tr("GPS Info IFD Pointer"));
   tag_names.insert(kInteroperabilityIfdPointer,
-                    tr("Interoperability IFD Pointer"));
+                   tr("Interoperability IFD Pointer"));
   // TIFF Rev. 6.0 attribute information used in Exif.
   tag_names.insert(kImageWidth, tr("Image Width"));
   tag_names.insert(kImageLength, tr("Image Height"));
   tag_names.insert(kBitsPerSample, tr("Bits Per Sample"));
   tag_names.insert(kCompression, tr("Compression"));
   tag_names.insert(kPhotometricInterpretation,
-                      tr("Photometric Interpretation"));
+                   tr("Photometric Interpretation"));
   tag_names.insert(kOrientation, tr("Orientation"));
   tag_names.insert(kSamplesPerPixel, tr("Samples Per Pixel"));
   tag_names.insert(kPlanarConfiguration, tr("Planar Configuration"));
@@ -102,7 +102,7 @@ void Exif::InitTagNames() {
   tag_names.insert(kStripByteCounts, tr("Strip Byte Counts"));
   tag_names.insert(kJPEGInterchangeFormat, tr("JPEG Interchange Format"));
   tag_names.insert(kJPEGInterchangeFormatLength,
-                      tr("JPEG Interchange Format Length"));
+                   tr("JPEG Interchange Format Length"));
   tag_names.insert(kTransferFunction, tr("Transfer Function"));
   tag_names.insert(kWhitePoint, tr("White Point"));
   tag_names.insert(kPrimaryChromaticities, tr("Primary Chromaticities"));
@@ -150,11 +150,11 @@ void Exif::InitTagNames() {
   tag_names.insert(kSubjectArea, tr("Subject Area"));
   tag_names.insert(kFlashEnergy, tr("Flash Energy"));
   tag_names.insert(kSpatialFrequencyResponse,
-                    tr("Spatial Frequency Response"));
+                   tr("Spatial Frequency Response"));
   tag_names.insert(kFocalPlaneXResolution, tr("Focal Plane X Resolution"));
   tag_names.insert(kFocalPlaneYResolution, tr("Focal Plane Y Resolution"));
   tag_names.insert(kFocalPlaneResolutionUnit,
-                    tr("Focal Plane Resolution Unit"));
+                   tr("Focal Plane Resolution Unit"));
   tag_names.insert(kSubjectLocation, tr("Subject Location"));
   tag_names.insert(kExposureIndex, tr("Exposure Index"));
   tag_names.insert(kSensingMethod, tr("Sensing Method"));
@@ -172,7 +172,7 @@ void Exif::InitTagNames() {
   tag_names.insert(kSaturation, tr("Saturation"));
   tag_names.insert(kSharpness, tr("Sharpness"));
   tag_names.insert(kDeviceSettingDescription,
-                    tr("Device Setting Description"));
+                   tr("Device Setting Description"));
   tag_names.insert(kSubjectDistanceRange, tr("Subject Distance Range"));
   tag_names.insert(kImageUniqueID, tr("Image Unique ID"));
   // The attribute information recorded in the GPS Info IFD.
