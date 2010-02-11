@@ -43,6 +43,7 @@ class Tiff : public File {
 
  private:
   void InitExif();
+  void InitIptc();
 
   TiffHeader* tiff_header() const { return tiff_header_; }
   void set_tiff_header(TiffHeader *tiff_header) { tiff_header_ = tiff_header; }

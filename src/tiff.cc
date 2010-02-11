@@ -28,6 +28,7 @@
 #include <qitty/byte_array.h>
 
 #include "exif.h"
+#include "iptc.h"
 #include "tiff_header.h"
 
 namespace qmeta {
@@ -81,6 +82,30 @@ void Tiff::InitExif() {
   }
 }
 
+// Reimplements the File::InitIptc().
+void Tiff::InitIptc() {
+  tiff_header()->ToFirstIfd();
+  // Creates a variable used to save the offset of the IPTC data. This value
+  // will be overwritten if the IPTC data is found.
+  qint64 iptc_offset = -1;
+  // Finds the IPTC data from the TIFF header. IPTC offset is recorded in
+  // the "IPTC dataset" tag, and represented as 33723 in decimal.
+  while (tiff_header()->HasNextIfdEntry()) {
+    qint64 ifd_entry_offset = tiff_header()->NextIfdEntryOffset();
+    int tag = tiff_header()->IfdEntryTag(ifd_entry_offset);
+    if (tag == 33723) {
+      iptc_offset = tiff_header()->IfdEntryOffset(ifd_entry_offset);
+      break;
+    }
+  }
+  if (iptc_offset != -1) {
+    // Creates the Iptc object.
+    Iptc *iptc = new Iptc(this);
+    if (iptc->Init(file(), iptc_offset))
+      set_iptc(iptc);
+    else
+      delete iptc;
+  }
 }
 
 }  // namespace qmeta

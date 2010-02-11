@@ -77,6 +77,7 @@ class TiffHeader : public QObject {
   int IfdEntryTag(qint64 ifd_entry_offset);
   Type IfdEntryType(qint64 ifd_entry_offset);
   QByteArray IfdEntryValue(qint64 ifd_entry_offset);
+  qint64 IfdEntryOffset(qint64 ifd_entry_offset);
   bool Init(QIODevice *file, qint64 file_start_offset);
   qint64 NextIfdEntryOffset();
   void ToFirstIfd();

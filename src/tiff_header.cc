@@ -87,6 +87,25 @@ QByteArray TiffHeader::IfdEntryValue(qint64 ifd_entry_offset) {
   return value;
 }
 
+// Returns the value offset for the IFD entry at the specified ifd_entry_offset.
+// Returns -1 if the if the value is not an offset.
+qint64 TiffHeader::IfdEntryOffset(qint64 ifd_entry_offset) {
+  Type type = IfdEntryType(ifd_entry_offset);
+  int count = ReadFromFile(4).toHex().toInt(NULL, 16);
+  // Retrieves the byte unit of the specified type.
+  int current_type_byte_unit = type_byte_unit().value(type);
+  // Calculates the number of bytes used for the entry value.
+  int value_byte_count = current_type_byte_unit * count;
+  // Jumps to the offset containing the entry value if the byte count > 4.
+  if (value_byte_count > 4) {
+    qint64 offset = ReadFromFile(4).toHex().toInt(NULL, 16) +
+                    file_start_offset();
+    return offset;
+  } else {
+    return -1;
+  }
+}
+
 // Initializes the TiffHeader object. Returns true if successful.
 bool TiffHeader::Init(QIODevice *file, qint64 file_start_offset) {
   set_file(file);
