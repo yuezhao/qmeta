@@ -47,7 +47,8 @@ HEADERS += src/exif.h \
            src/jpeg.h \
            src/standard.h \
            src/tiff.h \
-           src/tiff_header.h
+           src/tiff_header.h \
+           src/xmp.h
 SOURCES += src/exif.cc \
            src/exif_data.cc \
            src/file.cc \
@@ -56,7 +57,8 @@ SOURCES += src/exif.cc \
            src/jpeg.cc \
            src/standard.cc \
            src/tiff.cc \
-           src/tiff_header.cc
+           src/tiff_header.cc \
+           src/xmp.cc
 
 unix {
     headers.files = $$HEADERS

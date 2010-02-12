@@ -30,6 +30,7 @@
 #include "exif.h"
 #include "iptc.h"
 #include "tiff_header.h"
+#include "xmp.h"
 
 namespace qmeta {
 
@@ -150,6 +151,7 @@ void Jpeg::InitIptc() {
     delete iptc;
 }
 
+// Reimplements the File::InitXmp().
 void Jpeg::InitXmp() {
   file()->seek(2);
   while (!file()->atEnd()) {
@@ -168,6 +170,12 @@ void Jpeg::InitXmp() {
   }
   if (file()->atEnd())
     return;
+
+  Xmp *xmp = new Xmp(this);
+  if (xmp->Init(file(), file()->pos()))
+    set_xmp(xmp);
+  else
+    delete xmp;
 }
 
 }  // namespace qmeta

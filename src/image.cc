@@ -66,6 +66,7 @@ template<class T> bool Image::GuessType(FileType file_type) {
     set_file_type(file_type);
     set_exif(image->exif());
     set_iptc(image->iptc());
+    set_xmp(image->xmp());
     return true;
   } else {
     delete image;

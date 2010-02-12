@@ -20,40 +20,27 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the Image class, which has the ability to guess the file
-// type of the specified image data, and can be used as a normal file class
-// such as Jpeg, Tiff, etc.
+// This file defines the Xmp class.
 
-#ifndef QMETA_IMAGE_H_
-#define QMETA_IMAGE_H_
+#ifndef QMETA_XMP_H_
+#define QMETA_XMP_H_
 
-#include "exif.h"
-#include "file.h"
-#include "identifiers.h"
-#include "iptc.h"
-#include "jpeg.h"
-#include "tiff.h"
-#include "xmp.h"
+#include <QHash>
+
+#include "standard.h"
+
+class QIODevice;
 
 namespace qmeta {
 
-class Image : public File {
-public:
-  explicit Image(QByteArray *data);
-  explicit Image(QIODevice *file);
-  explicit Image(const QString &file_name);
-  bool IsValid();
+class Xmp : public Standard {
+  Q_OBJECT
 
-  FileType file_type() const { return file_type_; }
-
- private:
-  void GuessType();
-  template<class T> bool GuessType(FileType file_type);
-
-  void set_file_type(FileType file_type) { file_type_ = file_type; }
-  FileType file_type_;
+ public:
+  explicit Xmp(QObject *parent = NULL);
+  bool Init(QIODevice *file, qint64 file_start_offset);
 };
 
 }  // namespace qmeta
 
-#endif  // QMETA_IMAGE_H_
+#endif  // QMETA_XMP_H_
