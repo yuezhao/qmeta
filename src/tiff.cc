@@ -30,6 +30,7 @@
 #include "exif.h"
 #include "iptc.h"
 #include "tiff_header.h"
+#include "xmp.h"
 
 namespace qmeta {
 
@@ -105,6 +106,32 @@ void Tiff::InitIptc() {
       set_iptc(iptc);
     else
       delete iptc;
+  }
+}
+
+// Reimplements the File::InitXmp().
+void Tiff::InitXmp() {
+  tiff_header()->ToFirstIfd();
+  // Creates a variable used to save the offset of the XMP packet. This value
+  // will be overwritten if the XMP packet is found.
+  qint64 xmp_offset = -1;
+  // Finds the XMP packet from the TIFF header. XMP offset is recorded in
+  // the "XMP packet" tag, and represented as 700 in decimal.
+  while (tiff_header()->HasNextIfdEntry()) {
+    qint64 ifd_entry_offset = tiff_header()->NextIfdEntryOffset();
+    int tag = tiff_header()->IfdEntryTag(ifd_entry_offset);
+    if (tag == 700) {
+      xmp_offset = tiff_header()->IfdEntryOffset(ifd_entry_offset);
+      break;
+    }
+  }
+  if (xmp_offset != -1) {
+    // Creates the Iptc object.
+    Xmp *xmp = new Xmp(this);
+    if (xmp->Init(file(), xmp_offset))
+      set_xmp(xmp);
+    else
+      delete xmp;
   }
 }
 
