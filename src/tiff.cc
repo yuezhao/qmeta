@@ -126,7 +126,7 @@ void Tiff::InitXmp() {
     }
   }
   if (xmp_offset != -1) {
-    // Creates the Iptc object.
+    // Creates the Xmp object.
     Xmp *xmp = new Xmp(this);
     if (xmp->Init(file(), xmp_offset))
       set_xmp(xmp);
