@@ -34,6 +34,7 @@ namespace qmeta {
 
 class Exif;
 class Iptc;
+class Xmp;
 
 class File : public QObject {
  public:
@@ -44,16 +45,19 @@ class File : public QObject {
 
   Exif* exif() const { return exif_; }
   Iptc* iptc() const { return iptc_; }
+  Xmp* xmp() const { return xmp_; }
 
  protected:
   // Initializes the Exif object.
   virtual void InitExif() {};
   virtual void InitIptc() {};
   void InitMetadata();
+  virtual void InitXmp() {};
 
   void set_exif(Exif *exif) { exif_ = exif; }
   QIODevice* file() const { return file_; }
   void set_iptc(Iptc *iptc) { iptc_ = iptc; }
+  void set_xmp(Xmp *xmp) { xmp_ = xmp; }
 
  private:
   // Returns true if the tracked file is valid. This function should be
@@ -70,6 +74,9 @@ class File : public QObject {
   // The corresponded Iptc object of the tracked file. This property is set
   // if the tracked file supports the IPTC standard.
   Iptc *iptc_;
+  // The corresponded Xmp object of the tracked file. This property is set
+  // if the tracked file supports the XMP standard.
+  Xmp *xmp_;
 };
 
 }  // namespace qmeta

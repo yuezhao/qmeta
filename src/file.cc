@@ -34,6 +34,7 @@ namespace qmeta {
 File::File(QByteArray *data) {
   set_exif(NULL);
   set_iptc(NULL);
+  set_xmp(NULL);
   QBuffer *file = new QBuffer(data, this);
   if (file->open(QIODevice::ReadOnly))
     set_file(file);
@@ -45,6 +46,7 @@ File::File(QByteArray *data) {
 File::File(QIODevice *file) {
   set_exif(NULL);
   set_iptc(NULL);
+  set_xmp(NULL);
   set_file(file);
 }
 
@@ -52,6 +54,7 @@ File::File(QIODevice *file) {
 File::File(const QString &file_name) {
   set_exif(NULL);
   set_iptc(NULL);
+  set_xmp(NULL);
   QFile *file = new QFile(file_name, this);
   if (file->open(QIODevice::ReadOnly))
     set_file(file);
@@ -75,6 +78,7 @@ void File::InitMetadata() {
 
   InitExif();
   InitIptc();
+  InitXmp();
 }
 
 }  // namespace qmeta

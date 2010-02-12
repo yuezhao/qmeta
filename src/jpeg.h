@@ -41,6 +41,7 @@ class Jpeg : public File {
  private:
   void InitExif();
   void InitIptc();
+  void InitXmp();
 };
 
 }  // namespace qmeta

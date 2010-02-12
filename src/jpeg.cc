@@ -62,7 +62,7 @@ bool Jpeg::IsValid() {
 void Jpeg::InitExif() {
   file()->seek(2);
   while (!file()->atEnd()) {
-    // Find APP1 marker.
+    // Finds APP1 marker.
     if (file()->read(1).toHex() != "ff")
       continue;
     if (file()->read(1).toHex() != "e1")
@@ -71,11 +71,10 @@ void Jpeg::InitExif() {
     // Retrieves the APP1 length. The length doesn't include the APP1 marker.
     file()->read(2).toHex().toInt(NULL, 16);
 
-    // Checks the Exif Identifier Code.
-    if (file()->read(6).toHex() == "457869660000")
+    // Checks the Exif signature.
+    if (QString(file()->read(6)) == "Exif")
       break;
   }
-
   if (file()->atEnd())
     return;
 
@@ -110,8 +109,8 @@ void Jpeg::InitIptc() {
   // Skips segment size marker.
   file()->read(2);
 
-  // Checks the Photoshop idenfication string: "Photoshop 3.0\x00"
-  if (file()->read(14).toHex() != "50686f746f73686f7020332e3000")
+  // Checks the Photoshop signature.
+  if (QString(file()->read(14)) != "Photoshop 3.0")
     return;
 
   bool found_iptc = false;
@@ -149,6 +148,26 @@ void Jpeg::InitIptc() {
     set_iptc(iptc);
   else
     delete iptc;
+}
+
+void Jpeg::InitXmp() {
+  file()->seek(2);
+  while (!file()->atEnd()) {
+    // Finds APP1 marker.
+    if (file()->read(1).toHex() != "ff")
+      continue;
+    if (file()->read(1).toHex() != "e1")
+      continue;
+
+    // Retrieves the APP1 length. The length doesn't include the APP1 marker.
+    file()->read(2).toHex().toInt(NULL, 16);
+
+    // Checks the XMP signature.
+    if (QString(file()->read(29)) == "http://ns.adobe.com/xap/1.0/")
+      break;
+  }
+  if (file()->atEnd())
+    return;
 }
 
 }  // namespace qmeta
