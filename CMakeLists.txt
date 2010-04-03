@@ -25,6 +25,7 @@ cmake_minimum_required(VERSION 2.8.1)
 project(QMETA)
 
 find_package("Qt4" REQUIRED)
+set(QT_DONT_USE_QTGUI True)
 include(${QT_USE_FILE})
 
 find_library(QITTY_LIBRARY NAMES Qitty PATHS "qitty.h")
