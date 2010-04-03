@@ -22,7 +22,7 @@
 //
 // This file implements the detail of the TiffHeader class.
 
-#include "tiff_header.h"
+#include "qmeta/tiff_header.h"
 
 #include <QtCore>
 #include <qitty/byte_array.h>

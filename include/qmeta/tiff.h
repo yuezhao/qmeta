@@ -25,7 +25,7 @@
 #ifndef QMETA_TIFF_H_
 #define QMETA_TIFF_H_
 
-#include "file.h"
+#include "qmeta/file.h"
 
 class QString;
 

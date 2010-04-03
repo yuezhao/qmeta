@@ -22,7 +22,7 @@
 //
 // This file implements the details of all classes related to Exif data.
 
-#include "exif_data.h"
+#include "qmeta/exif_data.h"
 
 #include <QtCore>
 

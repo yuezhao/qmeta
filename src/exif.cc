@@ -22,12 +22,12 @@
 //
 // This file implements the detail of the Exif class.
 
-#include "exif.h"
+#include "qmeta/exif.h"
 
 #include <QtCore>
 #include <qitty/byte_array.h>
 
-#include "tiff_header.h"
+#include "qmeta/tiff_header.h"
 
 namespace qmeta {
 

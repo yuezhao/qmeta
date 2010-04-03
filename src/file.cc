@@ -22,11 +22,11 @@
 //
 // This file implements the detail of the File class.
 
-#include "file.h"
+#include "qmeta/file.h"
 
 #include <QtCore>
 
-#include "exif.h"
+#include "qmeta/exif.h"
 
 namespace qmeta {
 

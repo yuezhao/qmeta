@@ -31,7 +31,7 @@
 #include <QHash>
 #include <QObject>
 
-#include "identifiers.h"
+#include "qmeta/identifiers.h"
 
 class QIODevice;
 

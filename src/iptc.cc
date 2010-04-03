@@ -22,7 +22,7 @@
 //
 // This file implements the detail of the Iptc class.
 
-#include "iptc.h"
+#include "qmeta/iptc.h"
 
 #include <QtCore>
 

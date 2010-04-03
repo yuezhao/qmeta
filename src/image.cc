@@ -22,7 +22,7 @@
 //
 // This file implements the detail of the Image class.
 
-#include "image.h"
+#include "qmeta/image.h"
 
 #include <QtCore>
 

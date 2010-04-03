@@ -27,9 +27,9 @@
 
 #include <QHash>
 
-#include "exif_data.h"
-#include "identifiers.h"
-#include "standard.h"
+#include "qmeta/exif_data.h"
+#include "qmeta/identifiers.h"
+#include "qmeta/standard.h"
 
 class QIODevice;
 

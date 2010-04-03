@@ -22,7 +22,7 @@
 //
 // This file implements the detail of the Standard class.
 
-#include "standard.h"
+#include "qmeta/standard.h"
 
 #include <QtCore>
 

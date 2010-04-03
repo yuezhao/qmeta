@@ -27,13 +27,13 @@
 #ifndef QMETA_IMAGE_H_
 #define QMETA_IMAGE_H_
 
-#include "exif.h"
-#include "file.h"
-#include "identifiers.h"
-#include "iptc.h"
-#include "jpeg.h"
-#include "tiff.h"
-#include "xmp.h"
+#include "qmeta/exif.h"
+#include "qmeta/file.h"
+#include "qmeta/identifiers.h"
+#include "qmeta/iptc.h"
+#include "qmeta/jpeg.h"
+#include "qmeta/tiff.h"
+#include "qmeta/xmp.h"
 
 namespace qmeta {
 

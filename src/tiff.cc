@@ -22,15 +22,15 @@
 //
 // This file implements the detail of the TIFF class.
 
-#include "tiff.h"
+#include "qmeta/tiff.h"
 
 #include <QtCore>
 #include <qitty/byte_array.h>
 
-#include "exif.h"
-#include "iptc.h"
-#include "tiff_header.h"
-#include "xmp.h"
+#include "qmeta/exif.h"
+#include "qmeta/iptc.h"
+#include "qmeta/tiff_header.h"
+#include "qmeta/xmp.h"
 
 namespace qmeta {
 

@@ -14,8 +14,8 @@ Requirements
 QMeta relies on the Qitty library, which is a toolkit to enhance the Qt library. You can find this project at http://github.com/ollix/qitty.
 
 Because QMeta is a library for Qt, you also need the Qt library installed in
-order to use it. Further, QMeta uses qmake (part of Qt) to build itself, so you
-may need to know how it works.
+order to use it. Further, Qitty uses CMake to build itself, so you may need to
+know how it works.
 
 Getting the Source
 ------------------
@@ -27,26 +27,13 @@ http://git-scm.com/
 
 Building the Source
 -------------------
-QMeta uses qmake to generate the Makefile on unix-like platforms. It could
-also build on Windows, but not tested and implemented in the project file
-(qmeta.pro). Here's the simply steps to build the source under unix-like
-platforms. First, you need to switch to the top directory of the source (the
-directory containing `qmeta.pro` file). Then uses qmake to generate a
-Makefile.
+Here's the common process to build Qitty using CMake with GNU Makefile:
 
-    qmake qmeta.pro
-
-Once you have the Makefile, you can build it as usual.
-
-    make
-
-The generated library files will be put in the `dist` directory. By default,
-they are dynamic libraries, and you can install them to your operating system.
-
-    make install
-
-This command will install QMeta's header files in the `/usr/include/qmeta`
-directory, and dynamic library files in the `/usr/lib/` directory by default.
+1. mkdir build
+2. cd build
+3. cmake ..
+4. make
+5. make install
 
 Contribution
 ------------

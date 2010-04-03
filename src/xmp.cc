@@ -22,7 +22,7 @@
 //
 // This file implements the detail of the Xmp class.
 
-#include "xmp.h"
+#include "qmeta/xmp.h"
 
 #include <QtCore>
 

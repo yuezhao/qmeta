@@ -20,30 +20,27 @@
 //
 // QMeta - a library to manipulate image metadata based on Qt.
 //
-// This file defines the Jpeg class.
+// This file defines the Xmp class.
 
-#ifndef QMETA_JPEG_
-#define QMETA_JPEG_
+#ifndef QMETA_XMP_H_
+#define QMETA_XMP_H_
 
-#include "file.h"
+#include <QHash>
 
-class QString;
+#include "qmeta/standard.h"
+
+class QIODevice;
 
 namespace qmeta {
 
-class Jpeg : public File {
- public:
-  explicit Jpeg(QByteArray *data);
-  explicit Jpeg(QIODevice *file);
-  explicit Jpeg(const QString &file_name);
-  bool IsValid();
+class Xmp : public Standard {
+  Q_OBJECT
 
- private:
-  void InitExif();
-  void InitIptc();
-  void InitXmp();
+ public:
+  explicit Xmp(QObject *parent = NULL);
+  bool Init(QIODevice *file, qint64 file_start_offset);
 };
 
 }  // namespace qmeta
 
-#endif  // QMETA_JPEG_
+#endif  // QMETA_XMP_H_
